@@ -63,3 +63,23 @@ nixos-rebuild list-generations --flake .#hab
 3. Update `flake.nix` with the new host configuration
 4. Test: `nix flake check --flake .`
 5. Deploy: `nixos-rebuild switch --flake .#<hostname>`
+
+## Verifying ZFS Pool Configuration
+
+After deployment, verify your ZFS pool is properly configured as a triple mirror:
+
+```bash
+# Check ZFS pool status and verify it's mirrored
+zpool status ocean
+
+# Verify pool configuration
+zpool list ocean
+
+# Check dataset structure
+zfs list -r ocean
+
+# Verify disk paths match your config
+ls -la /dev/disk/by-id/ | grep "ZJV2N51Y\|ZJV670K4\|ZJV537CR"
+```
+
+Look for `mirror-0` in the `zpool status` output, showing all three disks in a mirrored vdev.
