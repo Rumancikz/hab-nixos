@@ -6,7 +6,7 @@
 |--------|------------|-------------|
 | Router | 10.0.0.1 | Current network router |
 | hab-atlas | 10.0.0.2 | Future NixOS server (planned) |
-| pikvm 1 | 10.0.0.4 | PiKVM for remote management |
+| pikvm 1 | 10.0.0.140 | PiKVM for remote management |
 | hab-lab-1 | 10.0.0.65 | Current NixOS homeserver |
 
 ## Network Configuration
