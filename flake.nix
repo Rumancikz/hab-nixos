@@ -13,14 +13,12 @@
   
       perSystem = { pkgs, ... }: {
         nixosConfigurations = {
-          hab = pkgs.nixos {
-            configuration = {
-              imports = [
-                ./hosts/hab/configuration.nix
-                disko.nixosModules.disko
-                ./disk-config.nix
-              ];
-            };
+          hab = nixpkgs.lib.nixosSystem {
+            system = "x86_64-linux";
+            modules = [
+              disko.nixosModules.disko
+              ./hosts/hab/configuration.nix
+            ];
           };
         };
       };

@@ -2,11 +2,15 @@
 { config, lib, pkgs, modulesPath, ... }:
 
 {
-  # Import disk configuration
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
     ./hardware-configuration.nix
-    ../../disk-config.nix
+    
+    # Dendritic module structure
+    ../modules/disk/default.nix
+    ../modules/networking/default.nix
+    ../modules/services/default.nix
+    ../modules/caddy.nix
   ];
 
   # Boot configuration
@@ -79,9 +83,4 @@
 
   # System configuration
   system.stateVersion = "24.05";
-
-  # Include shared modules for services
-  imports = [
-    ../../modules/default.nix
-  ];
 }

@@ -1,11 +1,9 @@
-# Shared modules for all hosts
+# Shared modules for all hosts - dendritic pattern aggregator
 {
   imports = [
-    ./nextcloud.nix
-    ./firefly-iii.nix
-    ./immich.nix
-    ./mealie.nix
-    ./tailscale.nix
+    ./networking/default.nix
+    ./services/default.nix
+    ./disk/default.nix
     ./caddy.nix
   ];
 
