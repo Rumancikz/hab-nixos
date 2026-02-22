@@ -20,6 +20,14 @@
               ./hosts/hab/configuration.nix
             ];
           };
+          
+          warframe = nixpkgs.lib.nixosSystem {
+            system = "x86_64-linux";
+            modules = [
+              disko.nixosModules.disko
+              ./hosts/warframe/configuration.nix
+            ];
+          };
         };
       };
   

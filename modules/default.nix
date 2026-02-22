@@ -4,6 +4,11 @@
     ./networking/default.nix
     ./services/default.nix
     ./disk/default.nix
+    ./desktop/default.nix
+    ./audio/default.nix
+    ./input/default.nix
+    ./users/zman.nix
+    ./applications/default.nix
     ./caddy.nix
   ];
 
