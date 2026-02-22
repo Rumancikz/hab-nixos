@@ -7,48 +7,48 @@
   };
 
   outputs =
-    {
-      nixpkgs,
-      disko,
-      flake-parts,
-      ...
-    }:
+    inputs@{ self, nixpkgs, disko, flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [ "x86_64-linux" ];
-
-      perSystem = { config, self', pkgs, lib, ... }: {
-        # Make nixos-install and other NixOS tools available
-        _module.args.pkgs = import nixpkgs {
-          system = "x86_64-linux";
+  
+      perSystem = { pkgs, ... }: {
+        nixosConfigurations = {
+          hab = pkgs.nixos {
+            configuration = {
+              imports = [
+                ./hosts/hab/configuration.nix
+                disko.nixosModules.disko
+                ./disk-config.nix
+              ];
+            };
+          };
         };
       };
-
-      # Define NixOS configurations using flake-parts' nixosSystem helper
-      nixosConfigurations = {
-        hab-lab-1 = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          modules = [
-            ./hosts/hab/configuration.nix
-            disko.nixosModules.disko
-            ./disk-config.nix
-          ];
-        };
-
-        # Example: Future hosts can be added here
-        # hab-atlas = nixpkgs.lib.nixosSystem {
-        #   system = "x86_64-linux";
-        #   modules = [
-        #     ./hosts/hab-atlas/configuration.nix
-        #     disko.nixosModules.disko
-        #   ];
-        # };
-
-        # pikvm = nixpkgs.lib.nixosSystem {
-        #   system = "x86_64-linux";
-        #   modules = [
-        #     ./hosts/pikvm/configuration.nix
-        #   ];
-        # };
-      };
+  
+      # Example: Future hosts can be added here
+      # perSystem.hab-atlas = { pkgs, ... }: {
+      #   nixosConfigurations = {
+      #     hab-atlas = pkgs.nixos {
+      #       configuration = {
+      #         imports = [
+      #           ./hosts/hab-atlas/configuration.nix
+      #           disko.nixosModules.disko
+      #         ];
+      #       };
+      #     };
+      #   };
+      # };
+  
+      # perSystem.pikvm = { pkgs, ... }: {
+      #   nixosConfigurations = {
+      #     pikvm = pkgs.nixos {
+      #       configuration = {
+      #         imports = [
+      #           ./hosts/pikvm/configuration.nix
+      #         ];
+      #       };
+      #     };
+      #   };
+      # };
     };
 }
