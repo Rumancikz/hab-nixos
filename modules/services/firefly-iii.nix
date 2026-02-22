@@ -21,7 +21,7 @@
       TZ = "America/New_York";
     };
 
-    enableNginx = true;
+    enableNginx = false;
     virtualHost = "localhost";
 
   };
