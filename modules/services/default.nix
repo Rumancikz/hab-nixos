@@ -6,6 +6,6 @@
     ./nextcloud.nix
     ./firefly-iii.nix
     ./immich.nix
-    ./mealie.nix
+    # ./mealie.nix
   ];
 }
