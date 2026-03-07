@@ -3,20 +3,10 @@
 {
   # Enable KDE Plasma 6 desktop environment
   services.xserver.enable = true;
-  services.xserver.displayManager.sddm.enable = true;
-
-  # Enable KDE applications
-  environment.plasma6 = {
-    enable = true;
-  };
-
-  services.xserver = {
-    layout = "us";
-    xkbVariant = "";
-  };
+  services.displayManager.sddm.enable = true;
+  services.desktopManager.plasma6.enable = true;
 
   services.printing.enable = true;
- 
 
   # Audio support in desktop environment
   sound.enable = true;

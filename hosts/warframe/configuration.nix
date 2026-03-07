@@ -12,11 +12,9 @@
     ../modules/networking/wifi.nix
     ../modules/networking/tailscale.nix
     ../modules/desktop/plasma6.nix
-    ../modules/audio/default.nix
     ../modules/input/default.nix
     ../modules/users/zman.nix
     ../modules/applications/default.nix
-    ../modules/services/default.nix
   ];
 
   # Boot configuration
