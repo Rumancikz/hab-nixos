@@ -13,11 +13,11 @@
   
       perSystem = { pkgs, ... }: {
         nixosConfigurations = {
-          hab = nixpkgs.lib.nixosSystem {
+          hab-lab = nixpkgs.lib.nixosSystem {
             system = "x86_64-linux";
             modules = [
               disko.nixosModules.disko
-              ./hosts/hab/configuration.nix
+              ./hosts/hab-lab/configuration.nix
             ];
           };
           

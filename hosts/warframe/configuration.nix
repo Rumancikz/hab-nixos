@@ -1,4 +1,7 @@
 # Main configuration for warframe laptop
+# Build commands:
+#   Local build:  nixos-rebuild switch --flake .#warframe
+#   Remote build: nixos-rebuild switch --flake .#warframe --target-host warframe@10.0.0.78
 { config, lib, pkgs, modulesPath, ... }:
 
 {

@@ -1,4 +1,7 @@
 # Main configuration for hab-lab-1 home lab server
+# Build commands:
+#   Local build:  nixos-rebuild switch --flake .#hab
+#   Remote build: nixos-rebuild switch --flake .#hab --target-host hab-lab@10.0.0.65
 { config, lib, pkgs, modulesPath, ... }:
 
 {
