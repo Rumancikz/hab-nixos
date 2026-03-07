@@ -7,6 +7,7 @@
     ./hardware-configuration.nix
     
     # Dendritic module structure
+    ../modules/disk/zfs.nix
     ../modules/networking/bluetooth.nix
     ../modules/networking/wifi.nix
     ../modules/networking/tailscale.nix
@@ -21,8 +22,6 @@
   # Boot configuration
   boot.loader.systemd-boot = true;
   boot.loader.canTouchEfiVariables = true;
-  boot.supportedFilesystems = [ "zfs" ];
-  boot.zfs.forceImportRoot = false;
   
   networking.hostName = "warframe";
 
@@ -50,15 +49,13 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  environment.systemPackages = with pkgs; [
-    zfs
-  ];
-
   # System packages
   environment.systemPackages = map lib.lowPrio [
     pkgs.curl
     pkgs.gitMinimal
   ];
+
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # Time and locale
   time.timeZone = "America/New_York";

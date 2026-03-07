@@ -8,6 +8,7 @@
     
     # Dendritic module structure
     ../modules/disk/default.nix
+    ../modules/disk/disko.nix
     ../modules/networking/tailscale.nix
     ../modules/services/serverdefault.nix
   ];
@@ -50,7 +51,6 @@
   environment.systemPackages = map lib.lowPrio [
     pkgs.curl
     pkgs.gitMinimal
-    pkgs.zfs
   ];
 
   # Time and locale

@@ -10,6 +10,18 @@
       description = "zman user";
       extraGroups = [ "networkmanager" "wheel" "video" "audio" "input" ];
       
+      packages = with pkgs; [
+        alacritty
+        keepassxc
+        syncthing
+        google-chrome
+        htop
+        libreoffice
+        vlc
+        ffmpeg
+        obs-studio
+      ];
+
       # SSH keys can be added here or managed separately
       openssh.authorizedKeys.keys = [
         # Add your SSH public key here
