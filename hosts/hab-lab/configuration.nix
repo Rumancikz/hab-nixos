@@ -6,26 +6,20 @@
 
 {
   imports = [
-    (modulesPath + "/installer/scan/not-detected.nix")
     ./hardware-configuration.nix
     
     # Dendritic module structure
     ../../modules/disk/default.nix
-    ../../modules/disk/disko.nix
     ../../modules/networking/tailscale.nix
     ../../modules/services/serverdefault.nix
   ];
 
-  networking.hostName = "hab-lab";
-  networking.hostId = "007f0209";
-
   # Boot configuration
   boot.loader.grub = {
-    enable = true;
-    device = "nodev";
     efiSupport = true;
     efiInstallAsRemovable = true;
   };
+  boot.supportedFilesystems = [ "zfs" "btrfs" ];
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usbhid" "usb_storage" "sd_mod" "sr_mod" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ ];
@@ -33,15 +27,18 @@
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-  # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
-  # (the default) this is the recommended approach. When using systemd-networkd it's
-  # still possible to use this option, but it's recommended to use it in conjunction
-  # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
-  networking.useDHCP = lib.mkDefault true;
-  # networking.interfaces.eno1.useDHCP = lib.mkDefault true;
-
-  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+    networking = {
+    hostId = "007f0201";
+    hostName = "hab-lab-1";
+    firewall = {
+      enable = true;
+      allowedTCPPorts = [
+        8080
+        config.services.firefly-iii.settings.DB_PORT
+        config.services.mealie.port
+      ];
+    };
+  };
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;

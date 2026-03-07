@@ -3,7 +3,7 @@
 
 {
   imports = [
-    ./firefly-iii.nix
+    # ./firefly-iii.nix
     ./immich.nix
     ./mealie.nix
   ];
