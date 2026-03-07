@@ -23,6 +23,9 @@
   boot.supportedFilesystems = [ "zfs" "btrfs" ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.trusted-users = [
+    "zman"
+  ];
 
     networking = {
     hostId = "007f0201";
