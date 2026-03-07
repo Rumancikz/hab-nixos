@@ -10,10 +10,10 @@
     ./hardware-configuration.nix
     
     # Dendritic module structure
-    ../modules/disk/default.nix
-    ../modules/disk/disko.nix
-    ../modules/networking/tailscale.nix
-    ../modules/services/serverdefault.nix
+    ../../modules/disk/default.nix
+    ../../modules/disk/disko.nix
+    ../../modules/networking/tailscale.nix
+    ../../modules/services/serverdefault.nix
   ];
 
   # Boot configuration
