@@ -20,10 +20,6 @@
     efiInstallAsRemovable = true;
   };
   boot.supportedFilesystems = [ "zfs" "btrfs" ];
-  boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usbhid" "usb_storage" "sd_mod" "sr_mod" ];
-  boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ ];
-  boot.extraModulePackages = [ ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
