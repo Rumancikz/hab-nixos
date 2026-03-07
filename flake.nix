@@ -3,32 +3,25 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     disko.url = "github:nix-community/disko";
     disko.inputs.nixpkgs.follows = "nixpkgs";
-    flake-parts.url = "github:hercules-ci/flake-parts";
   };
 
-  outputs = inputs@{ self, nixpkgs, disko, flake-parts, ... }:
-    flake-parts.lib.mkFlake { inherit inputs; } {
-      systems = [ "x86_64-linux" ];
+  outputs = { self, nixpkgs, disko, ... }: {
+    nixosConfigurations = {
+      hab-lab = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          disko.nixosModules.disko
+          ./hosts/hab-lab/configuration.nix
+        ];
+      };
 
-      perSystem = { pkgs, ... }: {
-        _module.args.pkgs = pkgs;
-        
-        nixosConfigurations = {
-          hab-lab = nixpkgs.lib.nixosSystem {
-            system = "x86_64-linux";
-            modules = [
-              disko.nixosModules.disko
-              ./hosts/hab-lab/configuration.nix
-            ];
-          };
-          
-          warframe = nixpkgs.lib.nixosSystem {
-            system = "x86_64-linux";
-            modules = [
-              ./hosts/warframe/configuration.nix
-            ];
-          };
-        };
+      warframe = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          disko.nixosModules.disko
+          ./hosts/warframe/configuration.nix
+        ];
       };
     };
+  };
 }
