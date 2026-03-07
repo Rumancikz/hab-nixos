@@ -33,7 +33,4 @@
     };
   };
 
-  # Sudo access for wheel group
-  security.sudo.wheelEnabled = true;
-  security.sudo.wheelNeedsPassword = false;
 }
