@@ -6,6 +6,7 @@
 
 {
   imports = [
+    ../../disk-config.nix
     ./hardware-configuration.nix
     
     # Dendritic module structure
