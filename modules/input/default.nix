@@ -2,7 +2,7 @@
 
 {
   # Input device configuration
-  services.xserver.libinput.enable = true;
+  services.libinput.enable = true;
 
   # Keyboard settings
   services.xserver.xkb = {
