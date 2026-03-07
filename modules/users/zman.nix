@@ -20,6 +20,7 @@
         vlc
         ffmpeg
         obs-studio
+        vscodium
       ];
 
       # SSH keys can be added here or managed separately
