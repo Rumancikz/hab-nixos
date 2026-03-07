@@ -21,7 +21,7 @@
   ];
 
   # Boot configuration
-  boot.loader.systemd-boot = true;
+  boot.loader.systemd-boot.enable = true;
   boot.loader.canTouchEfiVariables = true;
   
   networking.hostName = "warframe";
