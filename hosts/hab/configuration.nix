@@ -8,9 +8,8 @@
     
     # Dendritic module structure
     ../modules/disk/default.nix
-    ../modules/networking/default.nix
-    ../modules/services/default.nix
-    ../modules/caddy.nix
+    ../modules/networking/tailscale.nix
+    ../modules/services/serverdefault.nix
   ];
 
   # Boot configuration
