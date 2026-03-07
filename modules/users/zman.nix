@@ -7,7 +7,7 @@
     
     users.zman = {
       isNormalUser = true;
-      description = "zman user";
+      description = "Zman Da Man";
       extraGroups = [ "networkmanager" "wheel" "video" "audio" "input" ];
       
       packages = with pkgs; [
