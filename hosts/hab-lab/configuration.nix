@@ -16,6 +16,9 @@
     ../../modules/services/serverdefault.nix
   ];
 
+  networking.hostName = "hab-lab";
+  networking.hostId = "007f0209";
+
   # Boot configuration
   boot.loader.grub = {
     enable = true;
