@@ -1,4 +1,6 @@
 # Networking module aggregator
+{ lib, pkgs, ... }:
+
 {
   imports = [
     ./bluetooth.nix

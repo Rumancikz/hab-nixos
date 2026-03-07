@@ -1,4 +1,6 @@
 # Services module aggregator
+{ lib, pkgs, ... }:
+
 {
   imports = [
     ./nextcloud.nix
