@@ -50,6 +50,10 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
+  environment.systemPackages = with pkgs; [
+    zfs
+  ];
+
   # System packages
   environment.systemPackages = map lib.lowPrio [
     pkgs.curl
