@@ -69,11 +69,6 @@ in
       ocean = {
         type = "zpool";
         mode = "mirror";
-        devices = [
-          diskA
-          diskB
-          diskC
-        ];
         # Workaround: cannot import 'zroot': I/O error in disko tests
         # options.cachefile = "none";
         rootFsOptions = {
