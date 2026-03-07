@@ -5,6 +5,6 @@
   imports = [
     # ./firefly-iii.nix
     ./immich.nix
-    ./mealie.nix
+    # ./mealie.nix
   ];
 }
