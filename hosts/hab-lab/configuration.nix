@@ -27,9 +27,6 @@
     "zman"
     "hab-lab"
   ];
-  nix.settings.trusted-public-keys = [
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILepe2FGl5nzpyRWcHkRO8CPDygovL80Qik+HV8ypBAN zman@warframe"
-  ];
 
     networking = {
     hostId = "007f0201";
