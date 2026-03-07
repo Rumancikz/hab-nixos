@@ -9,7 +9,6 @@
   services.printing.enable = true;
 
   # Audio support in desktop environment
-  sound.enable = true;
   hardware.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
