@@ -3,7 +3,7 @@
 {
   # User management
   users = {
-    mutableUsers = false;
+    mutableUsers = true;
     
     users.zman = {
       isNormalUser = true;
