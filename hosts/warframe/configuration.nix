@@ -19,7 +19,8 @@
     # ../../modules/desktop/plasma6-xserver.nix
     ../../modules/desktop/hyprland-wayland.nix
     
-    ../../modules/users/zman.nix
+    # TODO: Should I remove this after home-manager is configured?
+    ../../modules/users/zman/zman.nix
 
     ../../modules/apps/default.nix
     # ../../modules/apps/ollama.nix #Need to build later

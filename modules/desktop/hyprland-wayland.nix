@@ -6,7 +6,7 @@ in {
   options.modules.desktop.hyprland = {
     enable = lib.mkEnableOption "Starter Hyprland Wayland compositor setup";
   };
-
+  # TODO: Touchpad is maybe not working? Forget if we have to enable cursor/mouse
   config = lib.mkIf cfg.enable {
     # 1. Enable Hyprland
     programs.hyprland = {
