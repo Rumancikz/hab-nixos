@@ -6,5 +6,6 @@
     # ./firefly-iii.nix
     ./immich.nix
     ./mealie.nix
+    ./paperless-ngx.nix
   ];
 }
