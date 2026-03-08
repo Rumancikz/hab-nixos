@@ -19,8 +19,6 @@
     # ../../modules/desktop/plasma6-xserver.nix
     ../../modules/desktop/hyprland-wayland.nix
     
-    ../../modules/input/default.nix
-    
     ../../modules/users/zman.nix
 
     ../../modules/apps/default.nix

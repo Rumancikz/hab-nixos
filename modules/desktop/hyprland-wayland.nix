@@ -42,5 +42,9 @@ in {
       enable = true;
       wayland.enable = true;
     };
+
+    # Input device configuration
+    services.libinput.enable = true;
+
   };
 }
