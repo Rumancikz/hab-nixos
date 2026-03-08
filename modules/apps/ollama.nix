@@ -1,5 +1,7 @@
 { config, pkgs, ... }:
 
 {
-  programs.ollama.enable = true;
+    environment.systemPackages = with pkgs; [
+      ollama-rocm
+    ];
 }
