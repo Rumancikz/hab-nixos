@@ -16,7 +16,8 @@
     ../../modules/networking/wifi.nix
     ../../modules/networking/tailscale.nix
     
-    ../../modules/desktop/plasma6-xserver.nix
+    # ../../modules/desktop/plasma6-xserver.nix
+    ../../modules/desktop/hyperland-wayland.nix
     
     ../../modules/input/default.nix
     
@@ -25,6 +26,8 @@
     ../../modules/apps/default.nix
     # ../../modules/apps/ollama.nix #Need to build later
   ];
+
+  modules.desktop.hyprland.enable = true;
 
   # Boot configuration
   boot.loader.systemd-boot.enable = true;

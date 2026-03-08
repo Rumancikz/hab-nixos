@@ -18,5 +18,14 @@
     pulse.enable = true;
     jack.enable = true;
   };
+  
+    # Keyboard settings
+  services.xserver.xkb = {
+    layout = "us";
+    variant = "";
+  };
+
+  # Input device configuration
+  services.libinput.enable = true;
 
 }
