@@ -16,14 +16,14 @@
     ../../modules/networking/wifi.nix
     ../../modules/networking/tailscale.nix
     
-    ../../modules/desktop/plasma6.nix
+    ../../modules/desktop/plasma6-xserver.nix
     
     ../../modules/input/default.nix
     
     ../../modules/users/zman.nix
 
     ../../modules/apps/default.nix
-    ../../modules/apps/ollama.nix
+    # ../../modules/apps/ollama.nix #Need to build later
   ];
 
   # Boot configuration
