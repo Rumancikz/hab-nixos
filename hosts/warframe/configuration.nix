@@ -11,13 +11,19 @@
     
     # Dendritic module structure
     ../../modules/disk/zfs.nix
+    
     ../../modules/networking/bluetooth.nix
     ../../modules/networking/wifi.nix
     ../../modules/networking/tailscale.nix
+    
     ../../modules/desktop/plasma6.nix
+    
     ../../modules/input/default.nix
+    
     ../../modules/users/zman.nix
-    ../../modules/applications/default.nix
+
+    ../../modules/apps/default.nix
+    ../../modules/apps/ollama.nix
   ];
 
   # Boot configuration
