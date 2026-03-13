@@ -51,7 +51,7 @@
     ports = [ 22 ];
   };
 
-  config.homelab.services.paperless = {
+  homelab.services.paperless = {
     enable = true;
   };
 
