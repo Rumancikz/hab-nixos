@@ -25,6 +25,7 @@
     ../../modules/apps/default.nix
     # ../../modules/apps/ollama.nix #Need to build later
     ../../modules/services/ai.nix
+    ../../modules/packages-override.nix
   ];
 
   modules.desktop.hyprland.enable = false;
