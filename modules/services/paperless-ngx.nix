@@ -32,7 +32,7 @@ in
       type = lib.types.listOf lib.types.str;
       default = [
         "paperless-consumer"
-        # "paperless-scheduler"
+        "paperless-scheduler"
         "paperless-task-queue"
         "paperless-web"
       ];
