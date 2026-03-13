@@ -61,6 +61,8 @@ in
         enable = true;
         # passwordFile = cfg.passwordFile;
         user = "hab-lab";
+        port = 3343;
+        address = "0.0.0.0";
         mediaDir = cfg.mediaDir;
         consumptionDir = cfg.consumptionDir;
         consumptionDirIsPublic = true;
