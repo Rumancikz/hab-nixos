@@ -65,9 +65,9 @@ in
         consumptionDir = cfg.consumptionDir;
         consumptionDirIsPublic = true;
         settings = {
-          PAPERLESS_PORT = 3343;
-          PAPERLESS_ADMIN_USER = "hab-lab";
-          PAPERLESS_ADMIN_PASSWORD = "testpaperless";
+          # PAPERLESS_PORT = 3343;
+          # PAPERLESS_ADMIN_USER = "hab-lab";
+          # PAPERLESS_ADMIN_PASSWORD = "testpaperless";
           # PAPERLESS_URL = "http://127.0.0.1";
           PAPERLESS_CONSUMER_IGNORE_PATTERN = [
             ".DS_STORE/*"
