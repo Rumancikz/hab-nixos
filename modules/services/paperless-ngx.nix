@@ -59,7 +59,7 @@ in
     services = {
       ${service} = {
         enable = true;
-        passwordFile = cfg.passwordFile;
+        # passwordFile = cfg.passwordFile;
         user = "hab-lab";
         mediaDir = cfg.mediaDir;
         consumptionDir = cfg.consumptionDir;
