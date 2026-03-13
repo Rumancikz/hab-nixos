@@ -2,6 +2,22 @@
 { pkgs, ... }:
 
 {
+
+# Ensure the hardware drivers are actually enabled
+  hardware.graphics = {
+    enable = true;
+    extraPackages = with pkgs; [
+      rocmPackages.clr.icd # Provides OpenCL/HIP runtimes
+    ];
+  };
+
+  # Add the tools to your system packages
+  environment.systemPackages = with pkgs; [
+    rocmPackages.rocminfo
+    rocmPackages.rocm-smi
+    clinfo # Useful for verifying OpenCL specifically
+  ];
+
 # ai.nix mainly from https://github.com/basnijholt/dotfiles/tree/3e2309889b6fde59dd719ff33f2c72e96d9d5171
   # --- llama-swap Service ---
   # Transparent proxy for automatic model swapping with llama.cpp
