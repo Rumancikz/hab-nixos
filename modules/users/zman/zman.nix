@@ -11,7 +11,6 @@
       extraGroups = [ "networkmanager" "wheel" "video" "audio" "input" ];
       
       packages = with pkgs; [
-        discord
         alacritty
         keepassxc
         syncthing
