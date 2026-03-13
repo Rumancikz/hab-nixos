@@ -5,92 +5,169 @@ let
   homelab = config.homelab;
 in
 {
-  environment.etc."paperless-admin-pass".text = "admin";
-  services.paperless = {
-    enable = true;
-    passwordFile = "/etc/paperless-admin-pass";
-  };
-  # options.homelab.services.${service} = {
-  #   enable = lib.mkEnableOption {
-  #     description = "Enable ${service}";
-  #   };
-  #   mediaDir = lib.mkOption {
-  #     type = lib.types.str;
-  #     default = "/tank/Paperless/Documents";
-  #   };
-  #   consumptionDir = lib.mkOption {
-  #     type = lib.types.str;
-  #     default = "/tank/Paperless/Import";
-  #   };
-  #   # passwordFile = lib.mkOption {
-  #   #   type = lib.types.path;
-  #   # };
-  #   configDir = lib.mkOption {
-  #     type = lib.types.str;
-  #     default = "/var/lib/${service}";
-  #   };
-  #   # url = lib.mkOption {
-  #   #   type = lib.types.str;
-  #   #   default = "paperless.${homelab.baseDomain}";
-  #   # };
-  #   monitoredServices = lib.mkOption {
-  #     type = lib.types.listOf lib.types.str;
-  #     default = [
-  #       "paperless-consumer"
-  #       "paperless-scheduler"
-  #       "paperless-task-queue"
-  #       "paperless-web"
-  #     ];
-  #   };
-  #   homepage.name = lib.mkOption {
-  #     type = lib.types.str;
-  #     default = "Paperless-ngx";
-  #   };
-  #   homepage.description = lib.mkOption {
-  #     type = lib.types.str;
-  #     default = "Document management system";
-  #   };
-  #   homepage.icon = lib.mkOption {
-  #     type = lib.types.str;
-  #     default = "paperless.svg";
-  #   };
-  #   homepage.category = lib.mkOption {
-  #     type = lib.types.str;
-  #     default = "Services";
-  #   };
+  options.homelab.services.${service} = {
+    enable = lib.mkEnableOption {
+      description = "Enable ${service}";
+    };
+    mediaDir = lib.mkOption {
+      type = lib.types.str;
+      default = "/tank/Paperless/Documents";
+    };
+    consumptionDir = lib.mkOption {
+      type = lib.types.str;
+      default = "/tank/Paperless/Import";
+    };
+    # passwordFile = lib.mkOption {
+    #   type = lib.types.path;
+    # };
+    configDir = lib.mkOption {
+      type = lib.types.str;
+      default = "/var/lib/${service}";
+    };
+    # url = lib.mkOption {
+    #   type = lib.types.str;
+    #   default = "paperless.${homelab.baseDomain}";
+    # };
+    monitoredServices = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [
+        "paperless-consumer"
+        "paperless-scheduler"
+        "paperless-task-queue"
+        "paperless-web"
+      ];
+    };
+    homepage.name = lib.mkOption {
+      type = lib.types.str;
+      default = "Paperless-ngx";
+    };
+    homepage.description = lib.mkOption {
+      type = lib.types.str;
+      default = "Document management system";
+    };
+    homepage.icon = lib.mkOption {
+      type = lib.types.str;
+      default = "paperless.svg";
+    };
+    homepage.category = lib.mkOption {
+      type = lib.types.str;
+      default = "Services";
+    };
 
-  # };
-  # config = lib.mkIf cfg.enable {
-  #   services = {
-  #     ${service} = {
-  #       enable = true;
-  #       # passwordFile = cfg.passwordFile;
-  #       user = "hab-lab";
-  #       mediaDir = cfg.mediaDir;
-  #       consumptionDir = cfg.consumptionDir;
-  #       consumptionDirIsPublic = true;
-  #       settings = {
-  #         # PAPERLESS_PORT = 3343;
-  #         # PAPERLESS_ADMIN_USER = "hab-lab";
-  #         # PAPERLESS_ADMIN_PASSWORD = "testpaperless";
-  #         # PAPERLESS_URL = "http://127.0.0.1";
-  #         PAPERLESS_CONSUMER_IGNORE_PATTERN = [
-  #           ".DS_STORE/*"
-  #           "desktop.ini"
-  #         ];
-  #         PAPERLESS_OCR_LANGUAGE = "eng";
-  #         PAPERLESS_OCR_USER_ARGS = {
-  #           optimize = 1;
-  #           pdfa_image_compression = "lossless";
-  #         };
-  #       };
-  #     };
-  #     # caddy.virtualHosts."${cfg.url}" = {
-  #     #   useACMEHost = homelab.baseDomain;
-  #     #   extraConfig = ''
-  #     #     reverse_proxy http://127.0.0.1:3343
-  #     #   '';
-  #     # };
-  #   };
-  # };
+  };
+  config = lib.mkIf cfg.enable {
+    services = {
+      ${service} = {
+        enable = true;
+        # passwordFile = cfg.passwordFile;
+        user = "hab-lab";
+        mediaDir = cfg.mediaDir;
+        consumptionDir = cfg.consumptionDir;
+        consumptionDirIsPublic = true;
+        settings = {
+          # PAPERLESS_PORT = 3343;
+          # PAPERLESS_ADMIN_USER = "hab-lab";
+          # PAPERLESS_ADMIN_PASSWORD = "tions.homelab.services.${service} = {
+    enable = lib.mkEnableOption {
+      description = "Enable ${service}";
+    };
+    mediaDir = lib.mkOption {
+      type = lib.types.str;
+      default = "/tank/Paperless/Documents";
+    };
+    consumptionDir = lib.mkOption {
+      type = lib.types.str;
+      default = "/tank/Paperless/Import";
+    };
+    # passwordFile = lib.mkOption {
+    #   type = lib.types.path;
+    # };
+    configDir = lib.mkOption {
+      type = lib.types.str;
+      default = "/var/lib/${service}";
+    };
+    # url = lib.mkOption {
+    #   type = lib.types.str;
+    #   default = "paperless.${homelab.baseDomain}";
+    # };
+    monitoredServices = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [
+        "paperless-consumer"
+        "paperless-scheduler"
+        "paperless-task-queue"
+        "paperless-web"
+      ];
+    };
+    homepage.name = lib.mkOption {
+      type = lib.types.str;
+      default = "Paperless-ngx";
+    };
+    homepage.description = lib.mkOption {
+      type = lib.types.str;
+      default = "Document management system";
+    };
+    homepage.icon = lib.mkOption {
+      type = lib.types.str;
+      default = "paperless.svg";
+    };
+    homepage.category = lib.mkOption {
+      type = lib.types.str;
+      default = "Services";
+    };
+
+  };
+  config = lib.mkIf cfg.enable {
+    services = {
+      ${service} = {
+        enable = true;
+        # passwordFile = cfg.passwordFile;
+        user = "hab-lab";
+        mediaDir = cfg.mediaDir;
+        consumptionDir = cfg.consumptionDir;
+        consumptionDirIsPublic = true;
+        settings = {
+          # PAPERLESS_PORT = 3343;
+          # PAPERLESS_ADMIN_USER = "hab-lab";
+          # PAPERLESS_ADMIN_PASSWORD = "testpaperless";
+          PAPERLESS_URL = "http://127.0.0.1:3343";
+          PAPERLESS_CONSUMER_IGNORE_PATTERN = [
+            ".DS_STORE/*"
+            "desktop.ini"
+          ];
+          PAPERLESS_OCR_LANGUAGE = "eng";
+          PAPERLESS_OCR_USER_ARGS = {
+            optimize = 1;
+            pdfa_image_compression = "lossless";
+          };
+        };
+      };
+      # caddy.virtualHosts."${cfg.url}" = {
+      #   useACMEHost = homelab.baseDomain;
+      #   extraConfig = ''
+      #     reverse_proxy http://127.0.0.1:3343
+      #   '';
+      # };
+    };
+estpaperless";
+          # PAPERLESS_URL = "http://127.0.0.1";
+          PAPERLESS_CONSUMER_IGNORE_PATTERN = [
+            ".DS_STORE/*"
+            "desktop.ini"
+          ];
+          PAPERLESS_OCR_LANGUAGE = "eng";
+          PAPERLESS_OCR_USER_ARGS = {
+            optimize = 1;
+            pdfa_image_compression = "lossless";
+          };
+        };
+      };
+      # caddy.virtualHosts."${cfg.url}" = {
+      #   useACMEHost = homelab.baseDomain;
+      #   extraConfig = ''
+      #     reverse_proxy http://127.0.0.1:3343
+      #   '';
+      # };
+    };
+  };
 }
