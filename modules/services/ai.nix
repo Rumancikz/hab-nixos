@@ -11,7 +11,7 @@
     sha256 = "sha256-UUaKD9kBuoWITv/AV6Nh9t0z5LPJnq1F8mc9L9eaiUM=";
   };
 
-  environment.etc."llama-templates/apriel-thinker.jinja".source = ./apriel-thinker.jinja;
+  # environment.etc."llama-templates/apriel-thinker.jinja".source = ./apriel-thinker.jinja;
 
   environment.etc."llama-swap/config.yaml".text = ''
     # llama-swap configuration
