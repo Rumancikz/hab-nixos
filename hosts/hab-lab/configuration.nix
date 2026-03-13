@@ -51,6 +51,10 @@
     ports = [ 22 ];
   };
 
+  config.homelab.services.paperless = {
+    enable = true;
+  };
+
   services.fail2ban.enable = true;
 
   # System packages
