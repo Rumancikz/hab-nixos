@@ -2,12 +2,12 @@
 
 {
   nixpkgs.config = {
-    cudaSupport = true;
+    cudaSupport = false;
     packageOverrides = pkgs: {
 llama-cpp =
         (pkgs.llama-cpp.override {
           cudaSupport = false;
-          rocmSupport = false;
+          rocmSupport = true;
           metalSupport = false;
           # Enable BLAS for optimized CPU layer performance (OpenBLAS)
           # This is crucial for models using split-mode or CPU offloading
