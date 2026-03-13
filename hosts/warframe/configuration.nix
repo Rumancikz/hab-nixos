@@ -23,7 +23,8 @@
     ../../modules/users/zman/zman.nix
 
     ../../modules/apps/default.nix
-    ../../modules/apps/ollama.nix #Need to build later
+    # ../../modules/apps/ollama.nix #Need to build later
+    ../../modules/services/ai.nix
   ];
 
   modules.desktop.hyprland.enable = false;
