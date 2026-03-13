@@ -74,6 +74,7 @@ in
             "desktop.ini"
           ];
           PAPERLESS_OCR_LANGUAGE = "eng";
+          PAPERLESS_CONSUMER_RECURSIVE = true;
           PAPERLESS_OCR_USER_ARGS = {
             optimize = 1;
             pdfa_image_compression = "lossless";
