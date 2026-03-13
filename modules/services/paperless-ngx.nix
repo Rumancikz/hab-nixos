@@ -68,7 +68,7 @@ in
           PAPERLESS_PORT = 8000;
           PAPERLESS_ADMIN_USER = "hab-lab";
           PAPERLESS_ADMIN_PASSWORD = "testpaperless";
-          PAPERLESS_URL = "http://127.0.0.1";
+          # PAPERLESS_URL = "http://127.0.0.1";
           PAPERLESS_CONSUMER_IGNORE_PATTERN = [
             ".DS_STORE/*"
             "desktop.ini"
