@@ -31,6 +31,17 @@
           --threads 1
           --jinja
 
+      "qwen3.5:2b-Q8-O":
+        cmd: |
+          ${pkgs.llama-cpp}/bin/llama-server
+          -hf unsloth/Qwen3.5-2B-GGUF:Q8_0
+          --port ''${PORT}
+          --ctx-size 65536
+          --batch-size 2048
+          --ubatch-size 512
+          --threads 1
+          --jinja
+
     healthCheckTimeout: 28800  # 8 hours for large model download + loading
 
     # TTL keeps models in memory for specified seconds after last use
