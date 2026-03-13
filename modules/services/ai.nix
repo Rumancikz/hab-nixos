@@ -2,7 +2,7 @@
 { pkgs, ... }:
 
 {
-
+# ai.nix mainly from https://github.com/basnijholt/dotfiles/tree/3e2309889b6fde59dd719ff33f2c72e96d9d5171
   # --- llama-swap Service ---
   # Transparent proxy for automatic model swapping with llama.cpp
   # GPT-OSS chat template directly from HuggingFace
