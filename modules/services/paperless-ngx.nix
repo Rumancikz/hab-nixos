@@ -31,10 +31,10 @@ in
     monitoredServices = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [
-        "paperless-web"
         "paperless-consumer"
         "paperless-scheduler"
         "paperless-task-queue"
+        "paperless-web"
       ];
     };
     homepage.name = lib.mkOption {
@@ -68,7 +68,7 @@ in
           PAPERLESS_PORT = 8000;
           PAPERLESS_ADMIN_USER = "hab-lab";
           PAPERLESS_ADMIN_PASSWORD = "testpaperless";
-          # PAPERLESS_URL = "https://${cfg.url}";
+          PAPERLESS_URL = "http://127.0.0.1";
           PAPERLESS_CONSUMER_IGNORE_PATTERN = [
             ".DS_STORE/*"
             "desktop.ini"
