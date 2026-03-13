@@ -1,9 +1,9 @@
 { config, lib, ... }:
-# let
-#   service = "paperless";
-#   cfg = config.homelab.services.${service};
-#   homelab = config.homelab;
-# in
+let
+  service = "paperless";
+  cfg = config.homelab.services.${service};
+  homelab = config.homelab;
+in
 {
   environment.etc."paperless-admin-pass".text = "admin";
   services.paperless = {

@@ -52,9 +52,9 @@
     ports = [ 22 ];
   };
 
-  homelab.services.paperless = {
-    enable = true;
-  };
+  # homelab.services.paperless = {
+  #   enable = true;
+  # };
 
   services.fail2ban.enable = true;
 
