@@ -33,6 +33,7 @@ llama-cpp =
             # for reproducible builds). We sacrifice portability for faster CPU layers.
             cmakeFlags = (oldAttrs.cmakeFlags or []) ++ [
               "-DGGML_NATIVE=ON"
+              "-DAMDGPU_TARGETS=gfx1102"
               # "-DCMAKE_CUDA_ARCHITECTURES=86" # RTX 3090 - needed since sandbox has no GPU
             ];
 
