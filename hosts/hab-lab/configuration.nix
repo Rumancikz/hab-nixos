@@ -54,8 +54,6 @@
   homelab.services.paperless = {
     enable = true;
   };
-  
-  environment.noXlibs = false;
 
   services.fail2ban.enable = true;
 
