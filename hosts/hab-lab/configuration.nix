@@ -32,7 +32,7 @@
     hostId = "007f0201";
     hostName = "hab-lab-1";
     firewall = {
-      enable = false;
+      enable = true;
       allowedTCPPorts = [
         8080
         3343
