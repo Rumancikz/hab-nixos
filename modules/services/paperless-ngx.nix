@@ -31,10 +31,10 @@ in
     monitoredServices = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [
+        "paperless-web"
         "paperless-consumer"
         "paperless-scheduler"
         "paperless-task-queue"
-        "paperless-web"
       ];
     };
     homepage.name = lib.mkOption {
