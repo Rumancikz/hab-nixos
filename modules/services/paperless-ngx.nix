@@ -15,7 +15,7 @@ in
     };
     consumptionDir = lib.mkOption {
       type = lib.types.str;
-      default = "tank/Paperless/Import";
+      default = "/tank/Paperless/Import";
     };
     # passwordFile = lib.mkOption {
     #   type = lib.types.path;
