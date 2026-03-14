@@ -6,7 +6,9 @@ services.homepage-dashboard = {
   enable = true;
   # Default port is 8082
   listenPort = 8082;
-  
+  environment = {
+    HOMEPAGE_ALLOWED_HOSTS = "10.0.0.6:8082,0.0.0.0:8082";
+  };
   services = [
     {
       "Core Services" = [
