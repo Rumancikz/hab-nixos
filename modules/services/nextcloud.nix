@@ -11,7 +11,7 @@
     nginx = {
       enable = true;
       virtualHosts."10.0.0.6" = {
-        listen = [ { addr = "10.0.0.6"; port = 8009; } ];
+        listen = [ { addr = "10.0.0.6"; port = 8008; } ];
       };
     };
 
@@ -51,7 +51,7 @@
       };
       settings = {
         trusted_domains = [ "10.0.0.6" ];
-        overwritehost = "10.0.0.6:8009";
+        overwritehost = "10.0.0.6:8008";
       };
 
       config = {
