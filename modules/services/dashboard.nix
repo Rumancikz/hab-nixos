@@ -52,10 +52,6 @@ services.homepage-dashboard = {
   # Global settings for the dashboard
   settings = {
     title = "My NixOS Homelab";
-    background = {
-      image = "https://images.unsplash.com/photo-1518770660439-4636190af475"; # Or a local path
-      opacity = 50;
-    };
     headerStyle = "clean";
     layout = {
       "Core Services" = {
