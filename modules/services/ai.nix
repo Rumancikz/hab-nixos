@@ -12,7 +12,6 @@ in
     extraPackages = with pkgs; [
       rocmPackages.clr.icd # Provides OpenCL/HIP runtimes
       rocmPackages.rocm-cmake
-      rocmPackages.rocm-smi-lib
       rocmPackages.hipblas
       rocmPackages.miopen
     ];
@@ -54,6 +53,17 @@ in
         cmd: |
           ${llama-cpp-rocm}/bin/llama-server
           -hf unsloth/Qwen3.5-2B-GGUF:Q8_0
+          --port ''${PORT}
+          --ctx-size 65536
+          --batch-size 2048
+          --ubatch-size 512
+          --threads 1
+          --jinja
+
+      "qwen3.5:9b-Q4_K_M":
+        cmd: |
+          ${llama-cpp-rocm}/bin/llama-server
+          -hf unsloth/Qwen3.5-9B-GGUF:Q4_K_M
           --port ''${PORT}
           --ctx-size 65536
           --batch-size 2048

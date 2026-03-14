@@ -35,7 +35,15 @@
       extraApps = with config.services.nextcloud.package.packages.apps; {
         # List of apps we want to install and are already packaged in
         # https://github.com/NixOS/nixpkgs/blob/master/pkgs/servers/nextcloud/packages/nextcloud-apps.json
-        inherit calendar contacts mail notes onlyoffice tasks memories;
+        inherit 
+          calendar 
+        #   contacts 
+        #   mail 
+        #   notes 
+          onlyoffice 
+        #   tasks 
+        #   memories
+        ;
 
         # # Custom app installation example.
         # cookbook = pkgs.fetchNextcloudApp rec {
@@ -64,6 +72,13 @@
         adminpassFile = "/etc/nextcloudadminpass";
       };
     };
+
+    services.nginx.virtualHosts."nix-nextcloud".listen = [
+      {
+        addr = "127.0.0.1";
+        port = 8009;
+      }
+    ];
 
     # onlyoffice = {
     #   enable = true;

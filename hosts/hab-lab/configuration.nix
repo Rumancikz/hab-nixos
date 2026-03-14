@@ -35,6 +35,7 @@
       enable = true;
       allowedTCPPorts = [
         8080
+        8009
         3343
         # config.services.firefly-iii.settings.DB_PORT
         config.services.mealie.port
