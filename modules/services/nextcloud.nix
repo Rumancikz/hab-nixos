@@ -11,13 +11,13 @@
     nginx = {
       enable = true;
       virtualHosts."10.0.0.6" = {
-        listen = [ { addr = "0.0.0.0"; port = 8009; } ];
+        listen = [ { addr = "10.0.0.6"; port = 8009; } ];
       };
     };
 
     nextcloud = {
       enable = true;
-      hostName = "0.0.0.0";
+      hostName = "10.0.0.6";
       datadir = "/tank/nextcloud";
        # Need to manually increment with every major upgrade.
       package = pkgs.nextcloud33;
