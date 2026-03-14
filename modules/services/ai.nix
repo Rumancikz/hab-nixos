@@ -1,13 +1,20 @@
 # AI and machine learning services (Ollama, llama-swap, Wyoming, Qdrant)
 { pkgs, ... }:
 
+let
+  # Explicitly build llama-cpp with ROCm support
+  llama-cpp-rocm = pkgs.llama-cpp.override { rocmSupport = true; };
+in
 {
-
-# Ensure the hardware drivers are actually enabled
+  # Consolidate graphics configuration (use hardware.graphics for NixOS 24.11+)
   hardware.graphics = {
     enable = true;
     extraPackages = with pkgs; [
       rocmPackages.clr.icd # Provides OpenCL/HIP runtimes
+      rocmPackages.rocm-cmake
+      rocmPackages.rocm-smi-lib
+      rocmPackages.hipblas
+      rocmPackages.miopen
     ];
   };
 
@@ -15,30 +22,26 @@
   environment.systemPackages = with pkgs; [
     rocmPackages.rocminfo
     rocmPackages.rocm-smi
-    clinfo # Useful for verifying OpenCL specifically
+    clinfo
   ];
 
-# ai.nix mainly from https://github.com/basnijholt/dotfiles/tree/3e2309889b6fde59dd719ff33f2c72e96d9d5171
+  # Set environment variables for ROCm runtime (Removed LD_LIBRARY_PATH overrides)
+  environment.variables = {
+    ROCM_PATH = "${pkgs.rocmPackages.rocm-cmake}/rocm";
+    HIP_VISIBLE_DEVICES = "0";
+  };
+
   # --- llama-swap Service ---
-  # Transparent proxy for automatic model swapping with llama.cpp
-  # GPT-OSS chat template directly from HuggingFace
   environment.etc."llama-templates/openai-gpt-oss-20b.jinja".source = pkgs.fetchurl {
     url = "https://huggingface.co/unsloth/gpt-oss-20b-GGUF/resolve/main/template";
     sha256 = "sha256-UUaKD9kBuoWITv/AV6Nh9t0z5LPJnq1F8mc9L9eaiUM=";
   };
 
-  # environment.etc."llama-templates/apriel-thinker.jinja".source = ./apriel-thinker.jinja;
-
   environment.etc."llama-swap/config.yaml".text = ''
-    # llama-swap configuration
-    # This config uses llama.cpp's server to serve models on demand
-
-    models:  # Ordered from newest to oldest
-
-      # Qwen3.5-35B-A3B - MoE model with 35B total / 3B active params
+    models:
       "qwen3.5:35b-a3b-q4":
         cmd: |
-          ${pkgs.llama-cpp}/bin/llama-server
+          ${llama-cpp-rocm}/bin/llama-server
           -hf unsloth/Qwen3.5-35B-A3B-GGUF:UD-Q4_K_XL
           --port ''${PORT}
           --ctx-size 65536
@@ -49,7 +52,7 @@
 
       "qwen3.5:2b-Q8-O":
         cmd: |
-          ${pkgs.llama-cpp}/bin/llama-server
+          ${llama-cpp-rocm}/bin/llama-server
           -hf unsloth/Qwen3.5-2B-GGUF:Q8_0
           --port ''${PORT}
           --ctx-size 65536
@@ -58,18 +61,14 @@
           --threads 1
           --jinja
 
-    healthCheckTimeout: 28800  # 8 hours for large model download + loading
+    healthCheckTimeout: 28800
+    ttl: 3600
 
-    # TTL keeps models in memory for specified seconds after last use
-    ttl: 3600  # Keep models loaded for 1 hour (like OLLAMA_KEEP_ALIVE)
-
-    # Groups allow running multiple models simultaneously
     groups:
       embedding:
-        # Keep embedding model always loaded alongside any other model
-        persistent: true  # Prevents other groups from unloading this
-        swap: false       # Don't swap models within this group
-        exclusive: false  # Don't unload other groups when loading this
+        persistent: true
+        swap: false
+        exclusive: false
         members:
           - "embeddinggemma:300m"
   '';
@@ -82,20 +81,20 @@
       Type = "simple";
       User = "zman";
       Group = "users";
+      # Give the service access to the GPU
+      SupplementaryGroups = [ "video" "render" ]; 
       ExecStart = "${pkgs.llama-swap}/bin/llama-swap --config /etc/llama-swap/config.yaml --listen 0.0.0.0:9292 --watch-config";
       Restart = "always";
       RestartSec = 10;
-      # Environment for CUDA support
-      # Environment = [
-      #   "PATH=/run/current-system/sw/bin"
-      #   "LD_LIBRARY_PATH=/run/opengl-driver/lib:/run/opengl-driver-32/lib"
-      #   # llama-swap can use both GPUs (0,1), but Ollama is restricted to GPU 0
-      # ];
-      # Environment needs access to cache directories for model downloads
-      # Simplified security settings to avoid namespace issues
+      
+      # Removed the toxic /usr/lib LD_LIBRARY_PATH override. 
+      # The Nix-built llama-cpp-rocm package knows where to find its own dependencies.
+      Environment = [
+        "ROCM_PATH=${pkgs.rocmPackages.rocm-cmake}/rocm"
+        "HIP_VISIBLE_DEVICES=0"
+      ];
       PrivateTmp = true;
-      NoNewPrivileges = true;
+      NoNewPrivileges = false;
     };
   };
-
 }
