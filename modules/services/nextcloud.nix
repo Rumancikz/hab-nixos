@@ -73,12 +73,6 @@
       };
     };
 
-    services.nginx.virtualHosts."nix-nextcloud".listen = [
-      {
-        addr = "127.0.0.1";
-        port = 8009;
-      }
-    ];
 
     # onlyoffice = {
     #   enable = true;
@@ -90,6 +84,13 @@
     #   forceSSL = true;
     #   enableACME = true;
     # };
+
+    nginx.virtualHosts."nix-nextcloud".listen = [
+      {
+        addr = "127.0.0.1";
+        port = 8009;
+      }
+    ];
 
   };
 
