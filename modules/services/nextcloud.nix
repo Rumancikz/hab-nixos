@@ -4,13 +4,10 @@
 
     environment.etc."nextcloudadminpass".text = "testpassword";
 
-    services = {
+  networking.firewall.allowedTCPPorts = [ 80 ];
 
-    #   "onlyoffice.hab.com" = {
-    #     forceSSL = true;
-    #     # enableACME = true;
-    #   };
-    # };
+  services = {
+    nginx.enable = true;
 
     nextcloud = {
       enable = true;
@@ -19,16 +16,10 @@
        # Need to manually increment with every major upgrade.
       package = pkgs.nextcloud33;
 
-      # Let NixOS install and configure the database automatically.
+      # Database and Caching
       database.createLocally = true;
-
-      # Let NixOS install and configure Redis caching automatically.
       configureRedis = true;
-
-      # Increase the maximum file upload size to avoid problems uploading videos.
       maxUploadSize = "16G";
-      # https = true;
-      # enableBrokenCiphersForSSE = false;
 
       autoUpdateApps.enable = true;
       extraAppsEnable = true;
@@ -53,45 +44,14 @@
         # };
       };
       settings = {
-        # overwriteprotocol = "http";
-        # overwritehost = "127.0.0.1";
-        # overwritewebroot = "/nextcloud";
-        # overwrite.cli.url = "http://127.0.0.1/nextcloud/";
-        # htaccess.RewriteBase = "/nextcloud";
-        trusted_domains = [
-          "10.0.0.6"
-        ];
+        trusted_domains = [ "10.0.0.6" ];
       };
 
       config = {
-        # overwriteProtocol = "https";
-        # defaultPhoneRegion = "PT";
         dbtype = "pgsql";
-        # dbtype = "sqlite";
         adminuser = "admin";
         adminpassFile = "/etc/nextcloudadminpass";
       };
     };
-
-
-    # onlyoffice = {
-    #   enable = true;
-    #   hostname = "0.0.0.0";
-    # };
-
-
-    #  services.nginx.virtualHosts.${config.services.nextcloud.hostName} = lib.mkIf nc-config.enableHttps {
-    #   forceSSL = true;
-    #   enableACME = true;
-    # };
-
-    nginx.virtualHosts."nix-nextcloud".listen = [
-      {
-        addr = "127.0.0.1";
-        port = 8009;
-      }
-    ];
-
   };
-
 }
