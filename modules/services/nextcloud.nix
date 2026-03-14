@@ -52,6 +52,7 @@
       settings = {
         trusted_domains = [ "10.0.0.6" ];
         overwritehost = "10.0.0.6:8008";
+        overwriteprotocol = "http";
       };
 
       config = {
