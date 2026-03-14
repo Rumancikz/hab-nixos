@@ -7,7 +7,13 @@
   networking.firewall.allowedTCPPorts = [ 80 ];
 
   services = {
-    nginx.enable = true;
+
+    nginx = {
+      enable = true;
+      virtualHosts."10.0.0.6" = {
+        listen = [ { addr = "0.0.0.0"; port = 8009; } ];
+      };
+    };
 
     nextcloud = {
       enable = true;
@@ -45,6 +51,7 @@
       };
       settings = {
         trusted_domains = [ "10.0.0.6" ];
+        overwritehost = "10.0.0.6:8009";
       };
 
       config = {
