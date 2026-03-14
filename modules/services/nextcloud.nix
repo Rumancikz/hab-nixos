@@ -24,7 +24,7 @@
 
       # Database and Caching
       database.createLocally = true;
-      configureRedis = false;
+      configureRedis = treu;
       maxUploadSize = "16G";
 
       autoUpdateApps.enable = true;
