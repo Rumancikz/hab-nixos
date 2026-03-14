@@ -6,6 +6,9 @@ services.homepage-dashboard = {
   enable = true;
   # Default port is 8082
   listenPort = 8082;
+
+  allowedHosts = "10.0.0.6:8082,localhost:8082";
+
   services = [
     {
       "Core Services" = [
@@ -49,9 +52,6 @@ services.homepage-dashboard = {
   # Global settings for the dashboard
   settings = {
     title = "My NixOS Homelab";
-    environment = {
-      HOMEPAGE_ALLOWED_HOSTS = "10.0.0.6:8082,localhost:8082";
-    };
     background = {
       image = "https://images.unsplash.com/photo-1518770660439-4636190af475"; # Or a local path
       opacity = 50;
