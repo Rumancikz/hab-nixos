@@ -7,5 +7,7 @@
     ./immich.nix
     ./mealie.nix
     ./paperless-ngx.nix
+    ./nextcloud.nix
+    ./dashboard.nix
   ];
 }
