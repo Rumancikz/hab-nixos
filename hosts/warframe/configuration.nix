@@ -8,6 +8,7 @@
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
     ./hardware-configuration.nix
+    ./secrets.nix
     
     # Dendritic module structure
     ../../modules/disk/zfs.nix

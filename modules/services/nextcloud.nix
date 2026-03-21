@@ -1,8 +1,18 @@
 { self, config, lib, pkgs, ... }:
 
+let
+  # Check if sops-nix secrets are available
+  sopsEnabled = config.homelab.secrets.enable or false;
+in
 {
-
-    environment.etc."nextcloudadminpass".text = "testpassword";
+    # Sops-nix secret configuration for Nextcloud
+    sops.secrets."nextcloud/admin-password" = lib.mkIf sopsEnabled {
+      owner = config.services.nextcloud.user;
+      group = config.services.nextcloud.group;
+      mode = "0400";
+      sopsFile = ./../secrets/nextcloud.yaml;
+      key = "nextcloud/admin-password";
+    };
 
     services = {
 
@@ -61,7 +71,10 @@
         dbtype = "pgsql";
         # dbtype = "sqlite";
         adminuser = "admin";
-        adminpassFile = "/etc/nextcloudadminpass";
+        # Use sops-nix secret if available, otherwise fallback to /etc/nextcloudadminpass
+        adminpassFile = if sopsEnabled 
+          then config.sops.secrets."nextcloud/admin-password".path 
+          else "/etc/nextcloudadminpass";
       };
     };
 

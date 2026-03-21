@@ -1,0 +1,28 @@
+# Sops-nix configuration for secrets management
+# This file defines which age keys can encrypt and decrypt secrets
+#
+# SETUP INSTRUCTIONS:
+# 1. Generate an age key on your machine:
+#    nix-shell -p age --run "age-keygen -o ~/.config/sops/age/keys.txt"
+#
+# 2. Get your public key:
+#    nix-shell -p age --run "age-keygen -y ~/.config/sops/age/keys.txt"
+#
+# 3. Replace the placeholder public key below with your actual public key
+#
+# 4. On each host, copy the private key to /var/lib/sops-nix/key.txt:
+#    sudo mkdir -p /var/lib/sops-nix
+#    sudo cp ~/.config/sops/age/keys.txt /var/lib/sops-nix/key.txt
+#    sudo chmod 400 /var/lib/sops-nix/key.txt
+
+keys:
+  # Shared age key for all hosts (replace with your actual public key)
+  # The public key starts with "age1..." and is about 60 characters
+  - &shared-key age1PLACEHOLDER_PUBLIC_KEY_HERE
+
+creation_rules:
+  # All secret files in secrets/ directory use this shared key
+  - path_regex: secrets/.*\.yaml$
+    key_groups:
+      - age:
+          - *shared-key

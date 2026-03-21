@@ -3,6 +3,8 @@ let
   service = "paperless";
   cfg = config.homelab.services.${service};
   homelab = config.homelab;
+  # Check if sops-nix secrets are available
+  sopsEnabled = config.homelab.secrets.enable or false;
 in
 {
   options.homelab.services.${service} = {
@@ -17,9 +19,11 @@ in
       type = lib.types.str;
       default = "/tank/Paperless/Import";
     };
-    # passwordFile = lib.mkOption {
-    #   type = lib.types.path;
-    # };
+    passwordFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = if sopsEnabled then config.sops.secrets."paperless/password".path else null;
+      description = "Path to the file containing the Paperless admin password";
+    };
     configDir = lib.mkOption {
       type = lib.types.str;
       default = "/var/lib/${service}";
@@ -56,10 +60,19 @@ in
 
   };
   config = lib.mkIf cfg.enable {
+    # Sops-nix secret configuration for Paperless
+    sops.secrets."paperless/password" = lib.mkIf sopsEnabled {
+      owner = cfg.user;
+      group = "paperless";
+      mode = "0400";
+      sopsFile = ./../secrets/paperless.yaml;
+      key = "paperless/password";
+    };
+
     services = {
       ${service} = {
         enable = true;
-        # passwordFile = cfg.passwordFile;
+        passwordFile = cfg.passwordFile;
         user = "hab-lab";
         port = 3343;
         address = "0.0.0.0";

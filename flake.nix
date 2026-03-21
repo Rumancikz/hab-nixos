@@ -7,14 +7,19 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, disko, ... }: {
+  outputs = { self, nixpkgs, disko, sops-nix, ... }: {
     nixosConfigurations = {
       hab-lab = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
           disko.nixosModules.disko
+          sops-nix.nixosModules.sops
           ./hosts/hab-lab/configuration.nix
         ];
       };
@@ -22,6 +27,7 @@
       warframe = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
+          sops-nix.nixosModules.sops
           ./hosts/warframe/configuration.nix
 
           # home-manager.nixosModules.home-manager

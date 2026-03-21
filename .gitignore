@@ -4,3 +4,15 @@
 # Editor-based HTTP Client requests
 /httpRequests/
 .idea/
+
+# Sops-nix secrets
+# Encrypted secrets (*.yaml) are tracked in git
+# Only ignore decrypted versions and temporary files
+*.decrypted.*
+*.yaml.dec
+*.yaml.bak
+
+# Age private keys - NEVER commit these
+*.agekey
+keys.txt
+*.key
