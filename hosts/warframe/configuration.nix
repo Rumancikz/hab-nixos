@@ -36,6 +36,16 @@
   
   networking.hostName = "warframe";
 
+  networking.firewall = {
+    enable = true;
+    extraCommands = ''
+      # Allow port 13323 from local/private networks only
+      iptables -A nixos-fw -p tcp --dport 13323 -s 10.0.0.0/8 -j nixos-fw-accept
+      iptables -A nixos-fw -p tcp --dport 13323 -s 172.16.0.0/12 -j nixos-fw-accept
+      iptables -A nixos-fw -p tcp --dport 13323 -s 192.168.0.0/16 -j nixos-fw-accept
+    '';
+  };
+
   # Not verified if needed for warframe or function yet
   # boot.loader.grub = {
   #   enable = true;
@@ -64,6 +74,7 @@
   environment.systemPackages = map lib.lowPrio [
     pkgs.curl
     pkgs.gitMinimal
+    pkgs.whisper-cpp-vulkan
   ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
