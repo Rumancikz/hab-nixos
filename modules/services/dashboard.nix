@@ -7,7 +7,7 @@ services.homepage-dashboard = {
   # Default port is 8082
   listenPort = 8082;
 
-  allowedHosts = "localhost:8082;100.104.22.20:8082;10.0.0.6:8082";
+  allowedHosts = "localhost:8082,100.104.22.20:8082,10.0.0.6:8082";
 
   services = [
     {
