@@ -10,6 +10,9 @@
 
     nginx = {
       enable = true;
+      virtualHosts."100.104.22.20" = {
+        listen = [ { addr = "100.104.22.20"; port = 8008; } ];
+      };
       virtualHosts."10.0.0.6" = {
         listen = [ { addr = "10.0.0.6"; port = 8008; } ];
       };
@@ -17,7 +20,7 @@
 
     nextcloud = {
       enable = true;
-      hostName = "10.0.0.6";
+      hostName = "100.104.22.20";
       datadir = "/tank/nextcloud";
        # Need to manually increment with every major upgrade.
       package = pkgs.nextcloud33;
@@ -50,8 +53,8 @@
         # };
       };
       settings = {
-        trusted_domains = [ "10.0.0.6" ];
-        overwritehost = "10.0.0.6:8008";
+        trusted_domains = [ "100.104.22.20" "10.0.0.6" ];
+        overwritehost = "100.104.22.20:8008";
         overwriteprotocol = "http";
       };
 
