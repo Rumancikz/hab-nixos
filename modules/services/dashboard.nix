@@ -7,7 +7,7 @@ services.homepage-dashboard = {
   # Default port is 8082
   listenPort = 8082;
 
-  allowedHosts = "10.0.0.6:8082,localhost:8082";
+  allowedHosts = "localhost:8082;100.104.22.20:8082";
 
   services = [
     {
@@ -15,8 +15,15 @@ services.homepage-dashboard = {
         {
           "Nextcloud" = {
             icon = "nextcloud.png";
-            href = "http://10.0.0.6:8008";
+            href = "http://100.104.22.20:8008";
             description = "File Cloud & Collaboration";
+          };
+        }
+                {
+          "OpenWebUI" = {
+            icon = "openwebui.png";
+            href = "http://100.104.22.20:3000";
+            description = "Private Local LLM";
           };
         }
       ];
@@ -26,22 +33,14 @@ services.homepage-dashboard = {
         {
           "Mealie" = {
             icon = "mealie.png";
-            href = "http://10.0.0.6:9000";
+            href = "http://100.104.22.20:9000";
             description = "Recipe Manager & Meal Planner";
-            # widget = {
-            #   type = "mealie";
-            #   url = "http://10.0.0.6:9000";
-            #   # version 2 is standard for modern Mealie
-            #   version = 2; 
-            #   # Get this in Mealie: Profile > Manage API Tokens
-            #   key = "your-mealie-api-key"; 
-            # };
           };
         }
         {
           "Paperless" = {
             icon = "paperless-ngx.png";
-            href = "http://10.0.0.6:3343";
+            href = "http://100.104.22.20:3343";
             description = "Document Archiving";
           };
         }

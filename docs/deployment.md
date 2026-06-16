@@ -83,3 +83,5 @@ ls -la /dev/disk/by-id/ | grep "ZJV2N51Y\|ZJV670K4\|ZJV537CR"
 ```
 
 Look for `mirror-0` in the `zpool status` output, showing all three disks in a mirrored vdev.
+
+nixos-rebuild switch --flake .#hab-lab --target-host hab-lab@10.0.0.6 --sudo --ask-sudo-password
