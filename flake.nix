@@ -7,18 +7,12 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    # Mealie v3.21.0 — nixpkgs has 3.16.0, we need AI provider features
-    mealie = {
-      url = "github:mealie-recipes/mealie/e22b8e7b734fb56d6f54a44526005104d3ac8f30";
-      flake = false;
-    };
   };
 
-  outputs = { self, nixpkgs, disko, ... }@inputs: {
+  outputs = { self, nixpkgs, disko, ... }: {
     nixosConfigurations = {
       hab-lab = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        specialArgs = { inherit inputs; };
         modules = [
           disko.nixosModules.disko
           ./hosts/hab-lab/configuration.nix
