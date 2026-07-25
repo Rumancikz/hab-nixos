@@ -46,6 +46,20 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
+  # Override mealie to pin to a specific upstream commit (nixpkgs version is outdated)
+  nixpkgs.overlays = [
+    (final: prev: {
+      mealie = prev.mealie.overrideAttrs (old: {
+        src = prev.fetchFromGitHub {
+          owner = "mealie-recipes";
+          repo  = "mealie";
+          rev   = "e22b8e7";
+          sha256 = "sha256-????"; # TODO: fill in after first build — Nix will print the correct hash
+        };
+      });
+    })
+  ];
+
   # Services
   services.openssh = {
     enable = true;
