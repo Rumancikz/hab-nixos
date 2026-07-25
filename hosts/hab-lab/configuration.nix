@@ -50,25 +50,25 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  # Override mealie to pin to a specific upstream commit (nixpkgs version is outdated)
-  nixpkgs.overlays = [
-    (final: prev: {
-      mealie = prev.mealie.overrideAttrs (old: {
-        src = prev.fetchFromGitHub {
-          owner = "mealie-recipes";
-          repo  = "mealie";
-          rev   = "e22b8e7b734fb56d6f54a44526005104d3ac8f30"; # v3.21.0
-          sha256 = "sha256-z1FQx5tngM/H78uLcaKENPFl7bWamIC0hPs1r8xM9PA=";
-        };
-        version = "3.21.0";
-        # v3.21.0 pins setuptools==83.0.0 but nixpkgs provides a different version.
-        # Relax the pin so the build accepts nixpkgs' setuptools.
-        postPatch = ''
-          substituteInPlace pyproject.toml --replace "setuptools==83.0.0" "setuptools>=80.0.0" || true
-        '';
-      });
-    })
-  ];
+  # TEMP: removed mealie overlay to test if it's a no-op
+  # nixpkgs.overlays = [
+  #   (final: prev: {
+  #     mealie = prev.mealie.overrideAttrs (old: {
+  #       src = prev.fetchFromGitHub {
+  #         owner = "mealie-recipes";
+  #         repo  = "mealie";
+  #         rev   = "e22b8e7b734fb56d6f54a44526005104d3ac8f30"; # v3.21.0
+  #         sha256 = "sha256-z1FQx5tngM/H78uLcaKENPFl7bWamIC0hPs1r8xM9PA=";
+  #       };
+  #       version = "3.21.0";
+  #       # v3.21.0 pins setuptools==83.0.0 but nixpkgs provides a different version.
+  #       # Relax the pin so the build accepts nixpkgs' setuptools.
+  #       postPatch = ''
+  #         substituteInPlace pyproject.toml --replace "setuptools==83.0.0" "setuptools>=80.0.0" || true
+  #       '';
+  #     });
+  #   })
+  # ];
 
   # Services
   services.openssh = {
