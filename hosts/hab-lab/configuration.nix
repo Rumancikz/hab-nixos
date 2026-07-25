@@ -37,6 +37,7 @@
         8080
         8008
         3343
+        443  # Caddy HTTPS
         # config.services.firefly-iii.settings.DB_PORT
         config.services.mealie.port
       ];
@@ -78,6 +79,25 @@
   };
 
   services.fail2ban.enable = true;
+
+  # Caddy reverse proxy — handles HTTPS and routes to services
+  services.caddy = {
+    enable = true;
+    virtualHosts = {
+      "mealie.hab-lab-1" = {
+        extraConfig = ''
+          tls internal
+          reverse_proxy 127.0.0.1:9000
+        '';
+      };
+      "webui.hab-lab-1" = {
+        extraConfig = ''
+          tls internal
+          reverse_proxy habai:3000
+        '';
+      };
+    };
+  };
 
   # System packages
   environment.systemPackages = map lib.lowPrio [
