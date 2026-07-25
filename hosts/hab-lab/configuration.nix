@@ -50,23 +50,51 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  # Override mealie to pin to a specific upstream commit (nixpkgs has 3.16.0, we want 3.21.0)
+  # Override mealie to pin to v3.21.0 (nixpkgs has 3.16.0)
+  # The nixpkgs mealie derivation builds the frontend in a separate
+  # derivation (mealie-frontend.nix) that overrideAttrs can't reach.
+  # We build both the Nuxt frontend and Python backend from the same source.
   nixpkgs.overlays = [
     (final: prev: {
-      mealie = prev.mealie.overrideAttrs (old: {
-        src = prev.fetchFromGitHub {
+      mealie = let
+        mealieSrc = prev.fetchFromGitHub {
           owner = "mealie-recipes";
           repo  = "mealie";
           rev   = "e22b8e7b734fb56d6f54a44526005104d3ac8f30"; # v3.21.0
           sha256 = "sha256-z1FQx5tngM/H78uLcaKENPFl7bWamIC0hPs1r8xM9PA=";
         };
-        version = "3.21.0";
-        # v3.21.0 pins setuptools==83.0.0 but nixpkgs provides a different version.
-        # Relax the pin so the build accepts nixpkgs' setuptools.
-        postPatch = ''
-          substituteInPlace pyproject.toml --replace "setuptools==83.0.0" "setuptools>=80.0.0" || true
-        '';
-      });
+        # Build the Nuxt frontend (yarn generate produces a static SPA)
+        mealieFrontend = prev.stdenv.mkDerivation rec {
+          pname = "mealie-frontend";
+          version = "3.21.0";
+          src = mealieSrc + "/frontend";
+          nativeBuildInputs = [ prev.nodejs_24 prev.yarn ];
+          installPhase = ''
+            yarn install --frozen-lockfile --non-interactive --production=false
+            yarn generate
+            mkdir -p $out
+            cp -r dist/* $out/
+          '';
+        };
+        # Build the Python package with the frontend bundled in
+        mealiePkg = prev.buildPythonApplication rec {
+          pname = "mealie";
+          version = "3.21.0";
+          src = mealieSrc;
+          format = "pyproject";
+          # Copy the built frontend into the source before building the wheel
+          preBuild = ''
+            rm -rf mealie/frontend
+            cp -r ${mealieFrontend} mealie/frontend
+          '';
+          # Relax setuptools pin, python version pin, and inject real version
+          postPatch = ''
+            substituteInPlace pyproject.toml --replace "setuptools==83.0.0" "setuptools>=80.0.0" || true
+            substituteInPlace pyproject.toml --replace ">=3.12,<3.13" ">=3.12" || true
+            substituteInPlace mealie/__init__.py --replace '"develop"' '"3.21.0"'
+          '';
+        };
+      in mealiePkg;
     })
   ];
 
