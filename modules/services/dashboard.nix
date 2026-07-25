@@ -15,7 +15,7 @@ services.homepage-dashboard = {
         {
           "Nextcloud" = {
             icon = "nextcloud.png";
-            href = "http://100.104.22.20:8008";
+            href = "https://hab-lab-1:8008";
             description = "File Cloud & Collaboration";
           };
         }

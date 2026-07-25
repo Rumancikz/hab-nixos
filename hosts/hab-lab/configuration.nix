@@ -109,6 +109,13 @@
           reverse_proxy 127.0.0.1:8082
         '';
       };
+      # Nextcloud on port 8008
+      "hab-lab-1:8008" = {
+        extraConfig = ''
+          tls internal
+          reverse_proxy 127.0.0.1:8080
+        '';
+      };
       # Paperless on port 7443
       "hab-lab-1:7443" = {
         extraConfig = ''
