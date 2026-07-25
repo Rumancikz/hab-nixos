@@ -58,10 +58,10 @@
         };
         version = "3.21.0";
         # v3.21.0 pins setuptools==83.0.0 but nixpkgs provides a different version.
-        # Override to use nixpkgs' managed setuptools instead.
-        pyprojectBuildDependencies = (old.pyprojectBuildDependencies or {}) // {
-          setuptools = final.python3.pkgs.setuptools;
-        };
+        # Relax the pin so the build accepts nixpkgs' setuptools.
+        postPatch = ''
+          substituteInPlace pyproject.toml --replace "setuptools==83.0.0" "setuptools>=80.0.0" || true
+        '';
       });
     })
   ];
