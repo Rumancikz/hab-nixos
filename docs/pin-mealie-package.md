@@ -11,7 +11,9 @@
 | Fix version mismatch (setuptools) | ✅ Done | `substituteInPlace` to relax setuptools pin |
 | Flake eval / build test | ✅ Done | `nix build .#nixosConfigurations.hab-lab...` passes |
 | Deploy to hab-lab | ✅ Done | `nixos-rebuild switch --flake .#hab-lab` — mealie-3.21.0 running |
-| Configure OpenAI integration | ⏳ In Progress | See "OpenAI Integration" section below |
+| Caddy reverse proxy | ✅ Done | HTTPS for mealie, webui, paperless |
+| Dashboard URLs updated | ✅ Done | All services point to Caddy HTTPS URLs |
+| Configure OpenAI integration | ❌ Abandoned | `settings` attr doesn't pass env vars; needs deeper investigation |
 
 ---
 
@@ -75,6 +77,17 @@ While working on this, also set up SSH access to warframe from WSL:
 - Added WSL public key to `modules/users/zman/zman.nix`
 - Opened port 22 in warframe's firewall
 - WSL can now SSH to warframe for remote builds
+
+### Related: Caddy Reverse Proxy (Completed)
+
+Added Caddy to hab-lab to serve all services over HTTPS:
+- `https://hab-lab-1:7443` → Paperless (port 3343)
+- `https://hab-lab-1:8443` → Mealie (port 9000)
+- `https://hab-lab-1:9443` → Open WebUI (habai:3000)
+- Uses `tls internal` (Caddy's own CA) — one cert warning per machine, then remembered
+- Dashboard (`modules/services/dashboard.nix`) updated with new URLs
+- Path-based routing (`/mealie`, `/webui`) did **not** work — SPAs need root access
+- Port-based routing works cleanly
 
 ## Background
 
