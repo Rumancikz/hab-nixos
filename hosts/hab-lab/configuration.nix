@@ -81,16 +81,17 @@
   services.fail2ban.enable = true;
 
   # Caddy reverse proxy — handles HTTPS and routes to services
+  # Uses Caddy's internal CA (tls internal) since tailnet domains aren't publicly resolvable
   services.caddy = {
     enable = true;
     virtualHosts = {
-      "mealie.hab-lab-1" = {
+      "mealie.hab-lab-1.hake-fujita.ts.net" = {
         extraConfig = ''
           tls internal
           reverse_proxy 127.0.0.1:9000
         '';
       };
-      "webui.hab-lab-1" = {
+      "webui.hab-lab-1.hake-fujita.ts.net" = {
         extraConfig = ''
           tls internal
           reverse_proxy habai:3000
