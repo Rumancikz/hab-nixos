@@ -68,7 +68,7 @@
           pname = "mealie-frontend";
           version = "3.21.0";
           src = mealieSrc + "/frontend";
-          nativeBuildInputs = [ prev.nodejs_24 prev.yarn ];
+          nativeBuildInputs = [ prev.nodejs prev.yarn ];
           installPhase = ''
             yarn install --frozen-lockfile --non-interactive --production=false
             yarn generate
@@ -77,7 +77,7 @@
           '';
         };
         # Build the Python package with the frontend bundled in
-        mealiePkg = prev.buildPythonApplication rec {
+        mealiePkg = prev.python3Packages.buildPythonApplication rec {
           pname = "mealie";
           version = "3.21.0";
           src = mealieSrc;
