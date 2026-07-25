@@ -86,15 +86,15 @@
   services.caddy = {
     enable = true;
     virtualHosts = {
-      # Mealie on HTTPS port 443
-      ":443" = {
+      # Mealie on HTTPS
+      "hab-lab-1" = {
         extraConfig = ''
           tls internal
           reverse_proxy 127.0.0.1:9000
         '';
       };
       # Open WebUI on HTTPS port 9443
-      ":9443" = {
+      "hab-lab-1:9443" = {
         extraConfig = ''
           tls internal
           reverse_proxy habai:3000
