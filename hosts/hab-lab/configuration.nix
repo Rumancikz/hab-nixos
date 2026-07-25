@@ -37,7 +37,8 @@
         8080
         8008
         3343
-        443  # Caddy HTTPS
+        8443  # Caddy HTTPS (mealie)
+        9443  # Caddy HTTPS (webui)
         # config.services.firefly-iii.settings.DB_PORT
         config.services.mealie.port
       ];
@@ -85,17 +86,18 @@
   services.caddy = {
     enable = true;
     virtualHosts = {
-      "hab-lab-1" = {
+      # Mealie on port 8443
+      "hab-lab-1:8443" = {
         extraConfig = ''
           tls internal
-
-          handle_path /mealie/* {
-            reverse_proxy 127.0.0.1:9000
-          }
-
-          handle_path /webui/* {
-            reverse_proxy habai:3000
-          }
+          reverse_proxy 127.0.0.1:9000
+        '';
+      };
+      # Open WebUI on port 9443
+      "hab-lab-1:9443" = {
+        extraConfig = ''
+          tls internal
+          reverse_proxy habai:3000
         '';
       };
     };
