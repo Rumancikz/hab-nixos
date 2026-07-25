@@ -10,8 +10,11 @@
 
     nginx = {
       enable = true;
-      virtualHosts."127.0.0.1" = {
-        listen = [ { addr = "127.0.0.1"; port = 8080; } ];
+      virtualHosts."100.104.22.20" = {
+        listen = [ { addr = "100.104.22.20"; port = 8008; } ];
+      };
+      virtualHosts."10.0.0.6" = {
+        listen = [ { addr = "10.0.0.6"; port = 8008; } ];
       };
     };
 
@@ -50,9 +53,9 @@
         # };
       };
       settings = {
-        trusted_domains = [ "100.104.22.20" "10.0.0.6" "hab-lab-1" ];
-        overwritehost = "hab-lab-1:8008";
-        overwriteprotocol = "https";
+        trusted_domains = [ "100.104.22.20" "10.0.0.6" ];
+        overwritehost = "100.104.22.20:8008";
+        overwriteprotocol = "http";
       };
 
       config = {
