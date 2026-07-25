@@ -86,6 +86,8 @@
   ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  # Allow outbound network access during builds (needed for yarn/npm deps)
+  nix.settings.sandbox = "relaxed";
 
   # Time and locale
   time.timeZone = "America/New_York";

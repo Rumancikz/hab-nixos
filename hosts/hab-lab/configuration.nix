@@ -2,7 +2,7 @@
 # Build commands:
 #   Local build:  nixos-rebuild switch --flake .#hab-lab
 #   Remote build: nixos-rebuild switch --flake .#hab-lab --target-host hab-lab@10.0.0.6 --use-remote-sudo
-{ config, lib, pkgs, modulesPath, ... }:
+{ config, lib, pkgs, modulesPath, inputs, ... }:
 
 {
   imports = [
@@ -51,23 +51,18 @@
   nixpkgs.config.allowUnfree = true;
 
   # Override mealie to pin to v3.21.0 (nixpkgs has 3.16.0)
-  # The nixpkgs mealie derivation builds the frontend in a separate
-  # derivation (mealie-frontend.nix) that overrideAttrs can't reach.
-  # We build both the Nuxt frontend and Python backend from the same source.
+  # Source comes from flake input `inputs.mealie` (see flake.nix).
+  # The nixpkgs mealie derivation builds the frontend separately
+  # (mealie-frontend.nix) so we need a standalone derivation.
   nixpkgs.overlays = [
     (final: prev: {
       mealie = let
-        mealieSrc = prev.fetchFromGitHub {
-          owner = "mealie-recipes";
-          repo  = "mealie";
-          rev   = "e22b8e7b734fb56d6f54a44526005104d3ac8f30"; # v3.21.0
-          sha256 = "sha256-z1FQx5tngM/H78uLcaKENPFl7bWamIC0hPs1r8xM9PA=";
-        };
+        src = inputs.mealie.outPath;
         # Build the Nuxt frontend (yarn generate produces a static SPA)
         mealieFrontend = prev.stdenv.mkDerivation rec {
           pname = "mealie-frontend";
           version = "3.21.0";
-          src = mealieSrc + "/frontend";
+          src = src + "/frontend";
           nativeBuildInputs = [ prev.nodejs prev.yarn ];
           installPhase = ''
             yarn install --frozen-lockfile --non-interactive --production=false
@@ -80,14 +75,12 @@
         mealiePkg = prev.python3Packages.buildPythonApplication rec {
           pname = "mealie";
           version = "3.21.0";
-          src = mealieSrc;
+          src = src;
           format = "pyproject";
-          # Copy the built frontend into the source before building the wheel
           preBuild = ''
             rm -rf mealie/frontend
             cp -r ${mealieFrontend} mealie/frontend
           '';
-          # Relax setuptools pin, python version pin, and inject real version
           postPatch = ''
             substituteInPlace pyproject.toml --replace "setuptools==83.0.0" "setuptools>=80.0.0" || true
             substituteInPlace pyproject.toml --replace ">=3.12,<3.13" ">=3.12" || true
