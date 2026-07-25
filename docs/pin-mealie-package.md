@@ -6,8 +6,10 @@
 |------|--------|-------|
 | Plan created | ✅ Done | See sections below |
 | Overlay added to hab-lab config | ✅ Done | `hosts/hab-lab/configuration.nix` |
-| Fill in sha256 hash | ⏳ Pending | Requires first build to get correct hash |
-| Flake eval / build test | ⏳ Pending | Verify no syntax or dependency errors |
+| Resolve full commit SHA | ✅ Done | `e22b8e7` → `e22b8e7b734fb56d6f54a44526005104d3ac8f30` (v3.21.0) |
+| Compute sha256 hash | ✅ Done | Used `nix-prefetch-url --unpack` for recursive hash |
+| Fix version mismatch (setuptools) | ✅ Done | `substituteInPlace` to relax setuptools pin |
+| Flake eval / build test | ✅ Done | `nix build .#nixosConfigurations.hab-lab...` passes |
 | Deploy to hab-lab | ⏳ Pending | `nixos-rebuild switch --flake .#hab-lab` |
 
 ## Background
@@ -17,7 +19,7 @@ The `mealie` package in nixpkgs is outdated. We need to pin it to a newer commit
 ## Target
 
 - **Repo:** `https://github.com/mealie-recipes/mealie.git`
-- **Commit:** `e22b8e7`
+- **Commit:** `e22b8e7b734fb56d6f54a44526005104d3ac8f30` (tag `v3.21.0`)
 - **Affected host:** `hab-lab` (only host using mealie)
 
 ## Current Setup
@@ -139,17 +141,19 @@ nixpkgs.overlays = [
       src = prev.fetchFromGitHub {
         owner = "mealie-recipes";   # GitHub organization
         repo  = "mealie";           # Repository name
-        rev   = "e22b8e7";          # Exact commit hash — pins the source
-        sha256 = "sha256-????";     # Content hash — fill in after first build fails
+        rev   = "e22b8e7b734fb56d6f54a44526005104d3ac8f30";  # Full SHA (v3.21.0)
+        sha256 = "sha256-z1FQx5tngM/H78uLcaKENPFl7bWamIC0hPs1r8xM9PA=";  # Recursive hash (base64)
       };
 
       # If the new version number differs from what nixpkgs expects,
       # you may also need to update:
-      # version = "x.y.z";
+      version = "3.21.0";
 
-      # If dependencies changed (new python packages, new build tools),
-      # you may need to update those too:
-      # buildInputs = old.buildInputs ++ [ final.someNewDep ];
+      # If the upstream source has build steps that reference version-specific
+      # strings (like setuptools pins), use substituteInPlace to relax them:
+      postPatch = ''
+        substituteInPlace pyproject.toml --replace "setuptools==83.0.0" "setuptools>=80.0.0" || true
+      '';
     });
 
   })
@@ -177,21 +181,66 @@ flake.nix
 
 ## Getting the sha256 Hash
 
-On the first build, Nix will fail because the `sha256` is a placeholder. The error message will include the correct hash:
+### Why the placeholder approach doesn't always work
 
-```
-hash mismatch in fixed-output derivation '/nix/store/...-mealie-...':
-  specified: sha256-????
-  got:       sha256-ABCdef123456...
+The classic approach (use `sha256-????` and let Nix tell you the real hash) works when Nix reaches the **build phase**. But with `fetchFromGitHub`, Nix validates the hash format at **eval time**, so a placeholder fails before any download happens.
+
+### The correct approach: `nix-prefetch-url --unpack`
+
+`fetchFromGitHub` uses `fetchzip` internally, which applies **recursive hashing** over the extracted contents (not the archive file). Use `--unpack` to match:
+
+```bash
+nix-prefetch-url --unpack --type sha256 \
+  https://github.com/mealie-recipes/mealie/archive/<REV>.tar.gz
 ```
 
-Copy the `got` hash and paste it into the overlay:
+This outputs a base32 hash. Convert it to base64 for the `sha256` attribute:
+
+```bash
+nix hash convert --from nix32 --to base64 sha256:<BASE32_HASH>
+```
+
+Then use it as:
+```nix
+sha256 = "sha256-<BASE64_HASH>";  # e.g. sha256-z1FQx5tngM/H78uLcaKENPFl7bWamIC0hPs1r8xM9PA=
+```
+
+### Key concepts from the NixOS Wiki
+
+- **Flat hashing** — hash of the file bytes (default for `fetchurl`)
+- **Recursive hashing** — hash of extracted contents after NARing (used by `fetchzip`/`fetchFromGitHub`)
+- **`--unpack`** flag on `nix-prefetch-url` — the `fetchzip` equivalent, gives recursive hash
+- Hash format for `fetchFromGitHub`: SRI-style `sha256-` prefix + standard base64 (with `=`, `+`, `/`)
+
+---
+
+## Troubleshooting
+
+### "pattern doesn't match anything in file" during build
+
+When pinning to a newer version than nixpkgs expects, build steps may reference strings (like `setuptools==82.0.1`) that don't exist in the new source. Fix with `substituteInPlace` in `postPatch`:
 
 ```nix
-sha256 = "sha256-ABCdef123456...";
+postPatch = ''
+  substituteInPlace pyproject.toml --replace "setuptools==83.0.0" "setuptools>=80.0.0" || true
+'';
 ```
 
-Then rebuild — it should succeed.
+`substituteInPlace` is a standard nixpkgs build tool — use it anywhere you need to patch source files during the build.
+
+### "invalid SRI hash" errors
+
+If you see `invalid SRI hash '...', length X != expected length Y`:
+1. Make sure you used `--unpack` for the recursive hash (not plain `nix-prefetch-url`)
+2. Convert from base32 to base64 (not base64url) — standard base64 with `=` padding
+3. Prefix with `sha256-`
+
+### Short commit hashes
+
+Always resolve short hashes (like `e22b8e7`) to full 40-character SHAs:
+```bash
+git ls-remote https://github.com/mealie-recipes/mealie.git <SHORT_HASH>
+```
 
 ---
 
