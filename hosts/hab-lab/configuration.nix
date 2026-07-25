@@ -57,12 +57,12 @@
   nixpkgs.overlays = [
     (final: prev: {
       mealie = let
-        src = inputs.mealie.outPath;
+        mealieSrc = inputs.mealie.outPath;
         # Build the Nuxt frontend (yarn generate produces a static SPA)
         mealieFrontend = prev.stdenv.mkDerivation rec {
           pname = "mealie-frontend";
           version = "3.21.0";
-          src = src + "/frontend";
+          src = mealieSrc + "/frontend";
           nativeBuildInputs = [ prev.nodejs prev.yarn ];
           installPhase = ''
             yarn install --frozen-lockfile --non-interactive --production=false
@@ -75,7 +75,7 @@
         mealiePkg = prev.python3Packages.buildPythonApplication rec {
           pname = "mealie";
           version = "3.21.0";
-          src = src;
+          src = mealieSrc;
           format = "pyproject";
           preBuild = ''
             rm -rf mealie/frontend
