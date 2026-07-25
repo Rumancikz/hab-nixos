@@ -54,7 +54,7 @@
           owner = "mealie-recipes";
           repo  = "mealie";
           rev   = "e22b8e7b734fb56d6f54a44526005104d3ac8f30"; # v3.21.0
-          sha256 = "sha256-????"; # TODO: fill in after first build
+          sha256 = "sha256-1sdnqjj0qvn4j7lfdckfppv654a3m9275w704wrl4h78c0c05gzz";
         };
       });
     })
