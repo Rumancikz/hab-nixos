@@ -1,5 +1,15 @@
 # Pin Mealie Package to Specific Git Commit
 
+## Status
+
+| Step | Status | Notes |
+|------|--------|-------|
+| Plan created | ✅ Done | See sections below |
+| Overlay added to hab-lab config | ✅ Done | `hosts/hab-lab/configuration.nix` |
+| Fill in sha256 hash | ⏳ Pending | Requires first build to get correct hash |
+| Flake eval / build test | ⏳ Pending | Verify no syntax or dependency errors |
+| Deploy to hab-lab | ⏳ Pending | `nixos-rebuild switch --flake .#hab-lab` |
+
 ## Background
 
 The `mealie` package in nixpkgs is outdated. We need to pin it to a newer commit from the upstream repo for `hab-lab-1`, the only host that runs it.

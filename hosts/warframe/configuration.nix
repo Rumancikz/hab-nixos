@@ -38,6 +38,7 @@
 
   networking.firewall = {
     enable = true;
+    allowedTCPPorts = [ 22 ];
     extraCommands = ''
       # Allow port 13323 from local/private networks only
       iptables -A nixos-fw -p tcp --dport 13323 -s 10.0.0.0/8 -j nixos-fw-accept
@@ -69,6 +70,13 @@
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
+
+  # SSH server
+  services.openssh = {
+    enable = true;
+    settings.PasswordAuthentication = false;
+    ports = [ 22 ];
+  };
 
   # System packages
   environment.systemPackages = map lib.lowPrio [

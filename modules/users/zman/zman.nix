@@ -25,8 +25,8 @@
 
       # SSH keys can be added here or managed separately
       openssh.authorizedKeys.keys = [
-        # Add your SSH public key here
-        # "ssh-rsa AAAAB3... user@host"
+        # WSL key
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEEzlQKun0aGnDcpkDzczg1EGoxWqaVgFUW0umooAi9x glacier@wsl"
       ];
       
       # Initial password (should be changed on first login)
