@@ -22,7 +22,7 @@ services.homepage-dashboard = {
                 {
           "OpenWebUI" = {
             icon = "openwebui.png";
-            href = "http://100.118.83.55:3000";
+            href = "https://hab-lab-1:9443";
             description = "Private Local LLM";
           };
         }
@@ -33,14 +33,14 @@ services.homepage-dashboard = {
         {
           "Mealie" = {
             icon = "mealie.png";
-            href = "http://100.104.22.20:9000";
+            href = "https://hab-lab-1:8443";
             description = "Recipe Manager & Meal Planner";
           };
         }
         {
           "Paperless" = {
             icon = "paperless-ngx.png";
-            href = "http://100.104.22.20:3343";
+            href = "https://hab-lab-1:7443";
             description = "Document Archiving";
           };
         }
