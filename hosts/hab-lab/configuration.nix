@@ -37,7 +37,8 @@
         8080
         8008
         3343
-        443  # Caddy HTTPS
+        443   # Caddy HTTPS (mealie)
+        9443  # Caddy HTTPS (webui)
         # config.services.firefly-iii.settings.DB_PORT
         config.services.mealie.port
       ];
@@ -80,22 +81,23 @@
 
   services.fail2ban.enable = true;
 
-  # Caddy reverse proxy — handles HTTPS and routes to services via paths
+  # Caddy reverse proxy — handles HTTPS for services
   # Uses Caddy's internal CA (tls internal) since tailnet domains aren't publicly resolvable
   services.caddy = {
     enable = true;
     virtualHosts = {
-      "hab-lab-1" = {
+      # Mealie on HTTPS port 443
+      ":443" = {
         extraConfig = ''
           tls internal
-
-          handle_path /mealie/* {
-            reverse_proxy 127.0.0.1:9000
-          }
-
-          handle_path /webui/* {
-            reverse_proxy habai:3000
-          }
+          reverse_proxy 127.0.0.1:9000
+        '';
+      };
+      # Open WebUI on HTTPS port 9443
+      ":9443" = {
+        extraConfig = ''
+          tls internal
+          reverse_proxy habai:3000
         '';
       };
     };
