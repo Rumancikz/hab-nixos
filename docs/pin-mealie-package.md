@@ -10,7 +10,71 @@
 | Compute sha256 hash | ✅ Done | Used `nix-prefetch-url --unpack` for recursive hash |
 | Fix version mismatch (setuptools) | ✅ Done | `substituteInPlace` to relax setuptools pin |
 | Flake eval / build test | ✅ Done | `nix build .#nixosConfigurations.hab-lab...` passes |
-| Deploy to hab-lab | ⏳ Pending | `nixos-rebuild switch --flake .#hab-lab` |
+| Deploy to hab-lab | ✅ Done | `nixos-rebuild switch --flake .#hab-lab` — mealie-3.21.0 running |
+| Configure OpenAI integration | ⏳ In Progress | See "OpenAI Integration" section below |
+
+---
+
+## OpenAI Integration (In Progress — July 25, 2026)
+
+### Goal
+
+Enable "import recipe from image" feature (available since v1.12.0, well below our v3.21.0).
+
+### What We Tried
+
+1. **Added OpenAI env vars via `settings`** in `modules/services/mealie.nix`:
+   ```nix
+   settings = {
+     OPENAI_API_BASE = "http://habai:8080/v1";
+     OPENAI_API_KEY = "habai";
+   };
+   ```
+   - This created `services.mealie.environment` — **not supported** by the nixpkgs module (error: `option does not exist`)
+   - Switched to `settings` — ✅ accepted, env vars appear in `systemctl cat mealie.service`
+   - **But**: Admin page still shows "OpenAI Not Ready"
+
+2. **Checked mealie source for env var names**:
+   - `grep -rhi "openai" ... | grep -iE "environ|getenv"` returned nothing
+   - Mealie docs only list `OPENAI_CUSTOM_PROMPT_DIR` as an env var
+   - **Theory**: API key and base URL are configured via the **Group Settings UI**, not env vars
+
+### Current State
+
+- ✅ mealie-3.21.0 is deployed and running (`/nix/store/ap9dvj...mealie-3.21.0`)
+- ✅ Env vars `OPENAI_API_BASE` and `OPENAI_API_KEY` are set in the systemd unit
+- ❌ Admin page still shows "OpenAI Not Ready"
+- ❌ No AI section visible in Group Settings UI
+
+### Remaining Investigation
+
+1. **Check Group Settings UI thoroughly** — the docs say to "visit your group settings" to configure AI. Look for:
+   - An "AI" or "OpenAI" tab in Group Settings
+   - A settings page at `/admin/groups` or similar
+   - Scroll to the bottom — AI settings may be below other sections
+
+2. **Try the documented env var names** — check mealie source for the actual env var names:
+   ```bash
+   grep -rhi "openai" /nix/store/ap9dvj8sw801wx7g0369q2vm26hk7fms-mealie-3.21.0/ --include="*.py" | grep -iE "environ|getenv|env\[" | head -20
+   ```
+
+3. **Check if `settings` maps to env vars correctly** — the nixpkgs module might prefix settings with `ML_` or transform them differently. Verify with:
+   ```bash
+   systemctl show mealie -p Environment
+   journalctl -u mealie --no-pager -n 50 | grep -i openai
+   ```
+
+4. **Local OpenAI endpoint** — user has habai (Tailscale MagicDNS) on port 8080. Need to confirm:
+   - The endpoint is reachable from hab-lab: `curl http://habai:8080/v1/models`
+   - What API key (if any) the endpoint requires
+
+### Related: SSH Setup (Completed)
+
+While working on this, also set up SSH access to warframe from WSL:
+- Added `services.openssh` to `hosts/warframe/configuration.nix`
+- Added WSL public key to `modules/users/zman/zman.nix`
+- Opened port 22 in warframe's firewall
+- WSL can now SSH to warframe for remote builds
 
 ## Background
 
