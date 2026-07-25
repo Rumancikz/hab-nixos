@@ -57,7 +57,11 @@
           sha256 = "sha256-z1FQx5tngM/H78uLcaKENPFl7bWamIC0hPs1r8xM9PA=";
         };
         version = "3.21.0";
-        postPatch = "";
+        # v3.21.0 pins setuptools==83.0.0 but nixpkgs provides a different version.
+        # Override to use nixpkgs' managed setuptools instead.
+        pyprojectBuildDependencies = (old.pyprojectBuildDependencies or {}) // {
+          setuptools = final.python3.pkgs.setuptools;
+        };
       });
     })
   ];
