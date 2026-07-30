@@ -17,7 +17,7 @@
     ../../modules/networking/tailscale.nix
     
     ../../modules/desktop/plasma6-xserver.nix
-    ../../modules/desktop/hyprland-wayland.nix
+    # ../../modules/desktop/hyprland-wayland.nix
     
     # TODO: Should I remove this after home-manager is configured?
     ../../modules/users/zman/zman.nix
@@ -28,7 +28,7 @@
     ../../modules/packages-override.nix
   ];
 
-  modules.desktop.hyprland.enable = false;
+  # modules.desktop.hyprland.enable = false;
 
   # Boot configuration
   boot.loader.systemd-boot.enable = true;
@@ -66,7 +66,11 @@
   # networking.interfaces.eno1.useDHCP = lib.mkDefault true;
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-  hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+  # hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+  hardware.graphics = {
+    enable = true;
+    enable32Bit = true;
+  };
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
