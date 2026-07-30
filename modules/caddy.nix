@@ -11,9 +11,7 @@ let
 
   # TLS config re-used by all zachru.com vhosts
   zachruTls = ''
-    tls ${certDir}/fullchain.pem ${certDir}/key.pem {
-      protocols tls1.3
-    }
+    tls ${certDir}/fullchain.pem ${certDir}/key.pem
   '';
 in
 
