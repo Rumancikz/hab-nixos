@@ -48,7 +48,7 @@ in
     # Don't let Caddy try ACME — we manage certs via security.acme.
     # Caddy will use explicit certs or fall back to internal CA.
     globalConfig = ''
-      auto_https ignore
+      auto_https disable_certs
     '';
 
     virtualHosts = {
