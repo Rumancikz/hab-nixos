@@ -45,6 +45,12 @@ in
   services.caddy = {
     enable = true;
 
+    # Disable Caddy's built-in ACME cert issuance — we use security.acme instead.
+    # Without this, Caddy tries HTTP/TLS challenges for publicly-unreachable domains.
+    globalConfig = ''
+      acme_ca off
+    '';
+
     virtualHosts = {
       # --- zachru.com domains (Let's Encrypt certs via ACME) ---
 
