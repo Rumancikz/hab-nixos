@@ -45,18 +45,20 @@ in
   services.caddy = {
     enable = true;
 
-    # Disable Caddy's built-in ACME cert issuance — we use security.acme instead.
-    # Without this, Caddy tries HTTP/TLS challenges for publicly-unreachable domains.
+    # Don't let Caddy try ACME — we manage certs via security.acme.
+    # Caddy will use explicit certs or fall back to internal CA.
     globalConfig = ''
-      acme_ca off
+      auto_https ignore
     '';
 
     virtualHosts = {
       # --- zachru.com domains (Let's Encrypt certs via ACME) ---
+      # Note: wildcard cert *.zachru.com doesn't cover base domain,
+      # so zachru.com uses tls internal (same as hab-lab-1 fallback)
 
       "zachru.com" = {
         extraConfig = ''
-          ${zachruTls}
+          tls internal
           reverse_proxy 127.0.0.1:8082
         '';
       };
