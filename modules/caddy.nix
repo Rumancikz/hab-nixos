@@ -1,7 +1,10 @@
 { pkgs, config, lib, ... }:
 
 let
-  caddySecrets = import ../secrets/caddy.nix;
+  # ⚠️ Replace these with real values on the target host (keep repo dirty)
+  # Get them from: https://developer.godaddy.com/keys/
+  godaddyApiKey  = "";
+  godaddyApiSecret = "";
 
   # ACME stores certs here: fullchain.pem + key.pem
   certDir = "/var/lib/acme/zachru.com";
@@ -26,8 +29,8 @@ in
 
       dnsProvider = "godaddy";
       environmentFile = pkgs.writeText "godaddy-creds" ''
-        GODADDY_API_KEY=${caddySecrets.godaddyApiToken}
-        GODADDY_API_SECRET=${caddySecrets.godaddyApiSecret}
+        GODADDY_API_KEY=${godaddyApiKey}
+        GODADDY_API_SECRET=${godaddyApiSecret}
       '';
 
       # Let Caddy read the cert files
