@@ -13,6 +13,7 @@
     ../../modules/disk/default.nix
     ../../modules/networking/tailscale.nix
     ../../modules/services/serverdefault.nix
+    ../../modules/caddy.nix
   ];
 
   # Boot configuration
@@ -37,11 +38,13 @@
         8080
         8008
         3343
-        443   # Caddy HTTPS (dashboard)
-        7443  # Caddy HTTPS (paperless)
-        8443  # Caddy HTTPS (mealie)
-        9443  # Caddy HTTPS (webui)
-        # config.services.firefly-iii.settings.DB_PORT
+        # Caddy ports handled in modules/caddy.nix
+        # 443 — zachru.com domains (Let's Encrypt via GoDaddy DNS)
+        # 7443, 8443, 9443 — hab-lab-1 internal (self-signed)
+        443
+        7443
+        8443
+        9443
         config.services.mealie.port
       ];
     };
@@ -63,41 +66,9 @@
 
   services.fail2ban.enable = true;
 
-  # Caddy reverse proxy — handles HTTPS for services
-  # Uses Caddy's internal CA (tls internal) since tailnet domains aren't publicly resolvable
-  services.caddy = {
-    enable = true;
-    virtualHosts = {
-      # Mealie on port 8443
-      "hab-lab-1:8443" = {
-        extraConfig = ''
-          tls internal
-          reverse_proxy 127.0.0.1:9000
-        '';
-      };
-      # Open WebUI on port 9443
-      "hab-lab-1:9443" = {
-        extraConfig = ''
-          tls internal
-          reverse_proxy habai:3000
-        '';
-      };
-      # Dashboard on default HTTPS (no port)
-      "hab-lab-1" = {
-        extraConfig = ''
-          tls internal
-          reverse_proxy 127.0.0.1:8082
-        '';
-      };
-      # Paperless on port 7443
-      "hab-lab-1:7443" = {
-        extraConfig = ''
-          tls internal
-          reverse_proxy 127.0.0.1:3343
-        '';
-      };
-    };
-  };
+  # Caddy is now configured in modules/caddy.nix
+  # Handles both zachru.com domains (Let's Encrypt + GoDaddy DNS challenge)
+  # and hab-lab-1 tailscale domains (self-signed internal TLS)
 
   # System packages
   environment.systemPackages = map lib.lowPrio [
