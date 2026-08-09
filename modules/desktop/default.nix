@@ -1,5 +1,5 @@
 {
   imports = [
-    ./hyperland-wayland
+    # ./hyperland-wayland
   ];
 }
