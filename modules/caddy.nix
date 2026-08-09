@@ -22,8 +22,9 @@ in
     defaults.email = "zach@zachru.com";
 
     certs."zachru.com" = {
-      # Wildcard cert covers *.zachru.com (base domain is included automatically)
-      domain = "*.zachru.com";
+      
+      domain = "zachru.com";
+      extraDomainNames = [ "*.zachru.com" ];
 
       dnsProvider = "godaddy";
       environmentFile = pkgs.writeText "godaddy-creds" ''
@@ -73,7 +74,7 @@ in
       "mealie.zachru.com" = {
         extraConfig = ''
           ${zachruTls}
-          reverse_proxy 127.0.0.1:9000
+          reverse_proxy 127.0.0.1:${toString config.services.mealie.port}
         '';
       };
 
@@ -96,7 +97,7 @@ in
       "hab-lab-1:8443" = {
         extraConfig = ''
           tls internal
-          reverse_proxy 127.0.0.1:9000
+          reverse_proxy 127.0.0.1:${toString config.services.mealie.port}
         '';
       };
 

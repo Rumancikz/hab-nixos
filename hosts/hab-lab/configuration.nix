@@ -45,7 +45,7 @@
         7443
         8443
         9443
-        config.services.mealie.port
+        # mealie (9000) is not listed: it binds loopback-only, reached via Caddy
       ];
     };
   };

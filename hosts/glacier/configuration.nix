@@ -23,7 +23,6 @@
 
     ../../modules/apps/default.nix
     ../../modules/services/ai-cuda.nix        # CUDA variant
-    ../../modules/packages-override-cuda.nix  # CUDA variant
   ];
 
   # Boot configuration
