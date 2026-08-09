@@ -23,7 +23,7 @@
       hostName = "100.104.22.20";
       datadir = "/tank/nextcloud";
        # Need to manually increment with every major upgrade.
-      package = pkgs.nextcloud33;
+      package = pkgs.nextcloud34;
 
       # Database and Caching
       database.createLocally = true;
