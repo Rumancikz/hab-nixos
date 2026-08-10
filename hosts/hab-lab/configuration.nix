@@ -40,12 +40,9 @@
         3343
         # Caddy ports handled in modules/caddy.nix
         # 443 — zachru.com domains (Let's Encrypt via GoDaddy DNS)
-        # 7443, 8443, 9443 — hab-lab-1 internal (self-signed)
-        443
-        7443
-        8443
-        9443
+        # 7443/8443/9443 removed: those internal-CA vhosts are gone (see modules/caddy.nix)
         # mealie (9000) is not listed: it binds loopback-only, reached via Caddy
+        443
       ];
     };
   };

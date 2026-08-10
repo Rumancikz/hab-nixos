@@ -3,6 +3,10 @@
 let
   # ⚠️ Replace these with real values on the target host (keep repo dirty)
   # Get them from: https://developer.godaddy.com/keys/
+  # Quick API check (200 = OK, 403 = GoDaddy API restricted for this account):
+  #   curl -s -o /dev/null -w '%{http_code}' \
+  #     -H "Authorization: sso-key ${KEY}:${SECRET}" \
+  #     https://api.godaddy.com/v1/domains/zachru.com
   godaddyApiKey  = "";
   godaddyApiSecret = "";
 
@@ -46,20 +50,24 @@ in
   services.caddy = {
     enable = true;
 
-    # Don't let Caddy try ACME — we manage certs via security.acme.
-    # Caddy will use explicit certs or fall back to internal CA.
+    # Don't let Caddy try ACME — security.acme (lego) provisions certs into
+    # ${certDir} and we load them with explicit `tls` directives above.
+    # If the cert files are missing, Caddy falls back to its internal CA
+    # (self-signed — the warnings you've been seeing).
     globalConfig = ''
       auto_https disable_certs
     '';
 
     virtualHosts = {
-      # --- zachru.com domains (Let's Encrypt certs via ACME) ---
-      # Note: wildcard cert *.zachru.com doesn't cover base domain,
-      # so zachru.com uses tls internal (same as hab-lab-1 fallback)
+      # --- zachru.com domains (Let's Encrypt via security.acme/lego, DNS-01 through GoDaddy) ---
+      # One cert covers apex + wildcard: domain = "zachru.com" with
+      # extraDomainNames = [ "*.zachru.com" ] → SAN: zachru.com, *.zachru.com.
+      # Every A record points at 100.104.22.20 (RFC 6598 CGNAT) — reachable only
+      # from inside the tailnet, so the domain is Tailscale-only by construction.
 
       "zachru.com" = {
         extraConfig = ''
-          tls internal
+          ${zachruTls}
           reverse_proxy 127.0.0.1:8082
         '';
       };
@@ -91,36 +99,9 @@ in
           reverse_proxy 127.0.0.1:3343
         '';
       };
-
-      # --- Tailscale internal hosts (self-signed) ---
-
-      "hab-lab-1:8443" = {
-        extraConfig = ''
-          tls internal
-          reverse_proxy 127.0.0.1:${toString config.services.mealie.port}
-        '';
-      };
-
-      "hab-lab-1:9443" = {
-        extraConfig = ''
-          tls internal
-          reverse_proxy habai:3000
-        '';
-      };
-
-      "hab-lab-1" = {
-        extraConfig = ''
-          tls internal
-          reverse_proxy 127.0.0.1:8082
-        '';
-      };
-
-      "hab-lab-1:7443" = {
-        extraConfig = ''
-          tls internal
-          reverse_proxy 127.0.0.1:3343
-        '';
-      };
+      # NOTE: the old hab-lab-1:8443/9443/7443 + hab-lab-1 vhosts are removed —
+      # they only ever served Caddy's internal CA (per-device warnings).
+      # Use the domain URLs instead; they resolve to the same Tailscale IP.
     };
   };
 }

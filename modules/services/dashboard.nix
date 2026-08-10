@@ -7,7 +7,7 @@ services.homepage-dashboard = {
   # Default port is 8082
   listenPort = 8082;
 
-  allowedHosts = "localhost:8082,100.104.22.20:8082,10.0.0.6:8082,hab-lab-1,hab-lab-1:443";
+  allowedHosts = "localhost:8082,100.104.22.20:8082,10.0.0.6:8082,hab-lab-1,hab-lab-1:443,zachru.com,zachru.com:443,hab-lab-1.zachru.com,hab-lab-1.zachru.com:443";
 
   services = [
     {
@@ -22,7 +22,7 @@ services.homepage-dashboard = {
                 {
           "OpenWebUI" = {
             icon = "openwebui.png";
-            href = "https://hab-lab-1:9443";
+            href = "https://ai.zachru.com";
             description = "Private Local LLM";
           };
         }
@@ -33,14 +33,14 @@ services.homepage-dashboard = {
         {
           "Mealie" = {
             icon = "mealie.png";
-            href = "https://hab-lab-1:8443";
+            href = "https://mealie.zachru.com";
             description = "Recipe Manager & Meal Planner";
           };
         }
         {
           "Paperless" = {
             icon = "paperless-ngx.png";
-            href = "https://hab-lab-1:7443";
+            href = "https://paperless.zachru.com";
             description = "Document Archiving";
           };
         }
