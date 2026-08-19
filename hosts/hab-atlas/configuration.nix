@@ -58,8 +58,8 @@
     enable = true;
     openFirewall = false;
     settings = {
-      PermitRootLogin = "no";
-      PasswordAuthentication = "no";
+      PermitRootLogin = false;
+      PasswordAuthentication = false;
     };
   };
 
