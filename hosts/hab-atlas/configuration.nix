@@ -60,8 +60,6 @@
     settings = {
       PermitRootLogin = "no";
       PasswordAuthentication = "no";
-      # with UsePAM, keyboard-interactive falls back to password auth
-      KbdInteractiveAuthentication = "no";
     };
   };
 
