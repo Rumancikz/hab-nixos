@@ -4,6 +4,7 @@
 {
   imports = [
     # ./firefly-iii.nix
+    ./borgbackup.nix
     ./immich.nix
     ./mealie.nix
     ./paperless-ngx.nix

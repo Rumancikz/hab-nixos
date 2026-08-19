@@ -61,6 +61,21 @@
     enable = true;
   };
 
+  # Daily encrypted borg backups to a remote server (see plans/borg-backup-plan.md).
+  # TODO: replace <BACKUP_USER> and <BACKUP_IP> with the real server,
+  # add service data dirs to `paths`, and install this host's borg SSH public
+  # key on the server (write-only, forced `borg serve --restrict-to-path`).
+  homelab.services.borgbackup = {
+    enable = true;
+    repo = "ssh://<BACKUP_USER>@<BACKUP_IP>/var/backups/borg/hab-lab-1";
+    # paths = [
+    #   "/tank/nextcloud"      # Nextcloud data
+    #   "/var/lib/mealie"      # Mealie recipes
+    #   "/tank/Paperless"      # Paperless documents + import
+    #   "/var/lib/paperless"   # Paperless config + DB
+    # ];
+  };
+
   services.fail2ban.enable = true;
 
   # Caddy is now configured in modules/caddy.nix
