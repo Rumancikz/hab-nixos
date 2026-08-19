@@ -19,6 +19,13 @@
         ];
       };
 
+      hab-atlas = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          ./hosts/hab-atlas/configuration.nix
+        ];
+      };
+
       warframe = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
