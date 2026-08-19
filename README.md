@@ -108,15 +108,20 @@ nix flake check --flake .
 
 5. Test: `nixos-rebuild switch --flake .#<hostname>`
 
-## Current Services
+## Current Services (hab-lab-1)
 
-| Service | Port | Description |
-|---------|------|-------------|
-| Nextcloud | 8080 | File sync and sharing |
-| Firefly III | 3306 | Personal finance manager |
-| Immich | 2283 | Photo backup and management |
-| Mealie | 9000 | Recipe management |
-| Tailscale | - | VPN mesh network |
+All `*.zachru.com` URLs resolve to the Tailscale IP `100.104.22.20` (GoDaddy A records `@` and `*`) — an RFC 6598 CGNAT address, so the services are **reachable only from inside the tailnet**. Caddy terminates HTTPS with Let's Encrypt certs (issued via `security.acme`/lego using the GoDaddy DNS-01 challenge), so any tailnet device gets a valid green lock.
+
+| Service | URL | Backend | Description |
+|---------|-----|---------|-------------|
+| Dashboard | https://zachru.com · https://hab-lab-1.zachru.com | :8082 | Homepage front door (Caddy) |
+| Mealie | https://mealie.zachru.com | :9000 (loopback-only) | Recipe manager |
+| Open WebUI | https://ai.zachru.com | habai:3000 (tailnet) | Private local LLM chat |
+| Paperless-ngx | https://paperless.zachru.com | :3343 | Document management |
+| Nextcloud | http://100.104.22.20:8008 | :8008 | File sync (direct — not yet behind Caddy) |
+| SSH | hab-lab@10.0.0.6:22 | :22 | Key-auth only |
+
+Not currently enabled: Firefly III, Immich.
 
 ## Documentation
 
