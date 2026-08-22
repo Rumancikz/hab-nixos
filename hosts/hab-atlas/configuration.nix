@@ -101,7 +101,7 @@
     mutableUsers = false;
     users = {
       root = {
-        initialHashedPassword = "$y$j9T$RbcN4mdZop6gD9K4x07AH/$XKRWxzJnp8gJM3UF/W8p8DwvC4EADEAsvxFU0KDCbw7";
+        initialHashedPassword = "$y$j9T$D/I5WYUNSSQfZwggKfph7.$ypnveaXbhyJS8xtRXRFqMrGPKFN0U4lTjsMRh..J.ZA";
       };
       atlas = {
         isNormalUser = true;
@@ -111,7 +111,7 @@
           "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILepe2FGl5nzpyRWcHkRO8CPDygovL80Qik+HV8ypBAN zman@warframe"
           "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEEzlQKun0aGnDcpkDzczg1EGoxWqaVgFUW0umooAi9x glacier@wsl"
         ];
-        initialHashedPassword = "$y$j9T$RbcN4mdZop6gD9K4x07AH/$XKRWxzJnp8gJM3UF/W8p8DwvC4EADEAsvxFU0KDCbw7";
+        initialHashedPassword = "$y$j9T$D/I5WYUNSSQfZwggKfph7.$ypnveaXbhyJS8xtRXRFqMrGPKFN0U4lTjsMRh..J.ZA";
       };
     };
   };
