@@ -231,7 +231,7 @@ in
       # Local inference: omp's built-in `llama.cpp` provider reads this and
       # auto-discovers the server's models (keyless by design).
       environment = {
-        LLAMA_CPP_BASE_URL = "http://10.0.0.155:8080";
+        LLAMA_CPP_BASE_URL = "http://10.0.0.155:8080/v1";
       };
 
       # --- Hardening: the agent runs unattended ---
