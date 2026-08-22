@@ -25,6 +25,17 @@
 # /var/lib/omp/.omp (mounted at /root/.omp), so sessions and credentials
 # persist across restarts and rebuilds.
 #
+# Git forge access (git.zachru.com, Forgejo on hab-lab): the agent
+# authenticates with a personal access token kept in
+# /var/lib/omp/git-credentials (0600 omp:omp; mounted read-only at
+# /root/.git-credentials). credential.helper=store and the commit
+# identity are injected via GIT_CONFIG_* env vars because /root is
+# tmpfs. One-time setup on the box:
+#   echo "https://zach:<token>@git.zachru.com" | sudo tee /var/lib/omp/git-credentials
+#   sudo chown omp:omp /var/lib/omp/git-credentials
+#   sudo chmod 600 /var/lib/omp/git-credentials
+# (tmpfiles keeps a 0600 placeholder so the container boots before that)
+#
 # Inference: the agent runs against the local llama.cpp (llama-swap)
 # server at 10.0.0.155:8080 via LLAMA_CPP_BASE_URL (set below). omp's
 # built-in `llama.cpp` provider auto-discovers the server's models and
@@ -214,11 +225,15 @@ in
 
   # Host-side bind sources (podman errors if they don't exist):
   # /srv/omp = project code the agent works on (-> /workspace),
-  # /var/lib/omp/.omp = agent state/credentials (-> /root/.omp).
+  # /var/lib/omp/.omp = agent state/credentials (-> /root/.omp),
+  # /var/lib/omp/git-credentials = Forgejo token (-> /root/.git-credentials).
   systemd.tmpfiles.rules = [
     "d /srv/omp 0750 omp omp -"
     "d /var/lib/omp/.omp 0700 omp omp -"
     "d /var/lib/omp/.omp/agent 0700 omp omp -"
+    # Placeholder for the Forgejo token (filled in by hand — see header).
+    # `f` creates it if missing and leaves an existing file untouched.
+    "f /var/lib/omp/git-credentials 0600 omp omp -"
   ];
 
   # Let atlas drive the sandbox without a password, e.g.
@@ -253,14 +268,26 @@ in
       volumes = [
         "/srv/omp:/workspace"
         "/var/lib/omp/.omp:/root/.omp"
+        # Forgejo token for git.zachru.com (0600 omp:omp on the host).
+        "/var/lib/omp/git-credentials:/root/.git-credentials:ro"
         # Model metadata for the local server; overlays the /root/.omp bind.
         "${ompModelsYml}:/root/.omp/agent/models.yml:ro"
       ];
 
       # Local inference: omp's built-in `llama.cpp` provider reads this and
       # auto-discovers the server's models (keyless by design).
+      # Git: credential store (reads /root/.git-credentials) + commit
+      # identity. /root is tmpfs, so the config rides in env vars instead
+      # of a .gitconfig (git 2.31+).
       environment = {
         LLAMA_CPP_BASE_URL = "http://10.0.0.155:8080/v1";
+        GIT_CONFIG_COUNT = "4";
+        GIT_CONFIG_KEY_0 = "credential.helper";
+        GIT_CONFIG_VALUE_0 = "store";
+        GIT_CONFIG_KEY_1 = "user.name";
+        GIT_CONFIG_VALUE_1 = "atlas-agent";
+        GIT_CONFIG_KEY_2 = "user.email";
+        GIT_CONFIG_VALUE_2 = "atlas-agent@zachru.com";
       };
 
       # --- Hardening: the agent runs unattended ---
