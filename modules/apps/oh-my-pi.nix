@@ -8,8 +8,8 @@
 # `omp`, which has no sudo rights — a container escape cannot escalate
 # on the host):
 #
-#   sudo -u omp podman exec -it omp omp     # interactive agent session
-#   sudo -u omp podman exec -it omp bash    # shell inside the sandbox
+#   sudo -u omp podman exec -it omp omp
+#   sudo -u omp podman exec -it omp bash
 #
 # From another machine on the tailnet (e.g. the laptop):
 #   ssh -t atlas@hab-atlas omp-attach
@@ -24,6 +24,12 @@
 # lives in /srv/omp (mounted at /workspace); omp state/config lives in
 # /var/lib/omp/.omp (mounted at /root/.omp), so sessions and credentials
 # persist across restarts and rebuilds.
+#
+# Inference: the agent runs against the local llama.cpp (llama-swap)
+# server at 10.0.0.155:8080 via LLAMA_CPP_BASE_URL (set below). omp's
+# built-in `llama.cpp` provider auto-discovers the server's models and
+# needs no API key. Pick a model in the TUI (alt+p) — the choice persists
+# in /var/lib/omp/.omp.
 #
 # One-time migration of existing state (on the box, before or after the
 # first boot of the new generation):
@@ -221,6 +227,12 @@ in
         "/srv/omp:/workspace"
         "/var/lib/omp/.omp:/root/.omp"
       ];
+
+      # Local inference: omp's built-in `llama.cpp` provider reads this and
+      # auto-discovers the server's models (keyless by design).
+      environment = {
+        LLAMA_CPP_BASE_URL = "http://10.0.0.155:8080";
+      };
 
       # --- Hardening: the agent runs unattended ---
       # Drop every capability; a coding workload needs none (rootless
