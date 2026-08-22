@@ -12,6 +12,8 @@
 
     # Dendritic module structure
     ../../modules/networking/tailscale.nix
+
+    ../../modules/apps/oh-my-pi.nix
   ];
 
   # Boot configuration (UEFI + GRUB, in place)
