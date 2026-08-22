@@ -8,6 +8,7 @@
     ./mealie.nix
     ./paperless-ngx.nix
     ./nextcloud.nix
+    ./forgejo.nix
     ./dashboard.nix
   ];
 }

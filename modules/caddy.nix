@@ -99,6 +99,12 @@ in
           reverse_proxy 127.0.0.1:3343
         '';
       };
+      "git.zachru.com" = {
+        extraConfig = ''
+          ${zachruTls}
+          reverse_proxy 127.0.0.1:3000
+        '';
+      };
       # NOTE: the old hab-lab-1:8443/9443/7443 + hab-lab-1 vhosts are removed —
       # they only ever served Caddy's internal CA (per-device warnings).
       # Use the domain URLs instead; they resolve to the same Tailscale IP.
