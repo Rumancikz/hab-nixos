@@ -180,9 +180,12 @@ in
     '')
   ];
 
-  # Project code the agent works on; mounted at /workspace in the container.
+  # Host-side bind sources (podman errors if they don't exist):
+  # /srv/omp = project code the agent works on (-> /workspace),
+  # /var/lib/omp/.omp = agent state/credentials (-> /root/.omp).
   systemd.tmpfiles.rules = [
     "d /srv/omp 0750 omp omp -"
+    "d /var/lib/omp/.omp 0700 omp omp -"
   ];
 
   # Let atlas drive the sandbox without a password, e.g.
