@@ -53,7 +53,7 @@
   # quiet once the user exists.
   systemd.services.forgejo.preStart = ''
       ${lib.getExe config.services.forgejo.package} admin user create \
-        --admin --username zach --email zach@zachru.com \
+        --admin --username hab-lab --email zach@zachru.com \
         --password "test" || true
       # To rotate the password later, uncomment:
       # ${lib.getExe config.services.forgejo.package} admin user change-password \
