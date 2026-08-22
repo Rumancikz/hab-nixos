@@ -58,11 +58,8 @@
   # Services
   services.openssh = {
     enable = true;
-    openFirewall = false;
-    settings = {
-      PermitRootLogin = false;
-      PasswordAuthentication = false;
-    };
+    settings.PasswordAuthentication = false;
+    ports = [ 22 ];
   };
 
   services.fail2ban.enable = true;
