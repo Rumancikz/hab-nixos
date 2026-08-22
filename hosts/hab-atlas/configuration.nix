@@ -96,6 +96,11 @@
     ];
   }];
 
+  # Only wheel members (atlas) may execute sudo at all; non-wheel users
+  # (including the sandbox `omp` user) cannot run the binary — shrinks the
+  # blast radius of a sudo vulnerability.
+  security.sudo.execWheelOnly = true;
+
   # Users
   users = {
     mutableUsers = false;

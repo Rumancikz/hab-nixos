@@ -1,7 +1,35 @@
-# Oh My Pi — pinned release binary (not in nixpkgs).
-# Modeled on https://github.com/Rumancikz/omp-nix, which tracks the latest
-# release automatically; we pin an explicit version instead.
-{ config, pkgs, ... }:
+# Oh My Pi — sandboxed coding agent in a rootless podman container.
+#
+# Pins the v18.0.0 release binary (modeled on
+# https://github.com/Rumancikz/omp-nix, which tracks the latest release
+# automatically; we pin an explicit version), wraps it in a minimal OCI
+# image built from nixpkgs, and runs it in a rootless podman container
+# owned by a dedicated `omp` system user (container root maps to host
+# `omp`, which has no sudo rights — a container escape cannot escalate
+# on the host):
+#
+#   sudo -u omp podman exec -it omp omp     # interactive agent session
+#   sudo -u omp podman exec -it omp bash    # shell inside the sandbox
+#
+# From another machine on the tailnet (e.g. the laptop):
+#   ssh -t atlas@hab-atlas omp-attach
+# attaches to (or starts) a tmux session running the agent; the session
+# survives SSH disconnects — detach with Ctrl-b d, re-attach anytime.
+#
+# Hardening (the agent runs unattended): all capabilities dropped, pids
+# limit, read-only rootfs with tmpfs /tmp and /root, default seccomp and
+# no-new-privileges (rootless podman defaults), no published ports.
+#
+# The container idles (sleep infinity) and starts at boot. Project code
+# lives in /srv/omp (mounted at /workspace); omp state/config lives in
+# /var/lib/omp/.omp (mounted at /root/.omp), so sessions and credentials
+# persist across restarts and rebuilds.
+#
+# One-time migration of existing state (on the box, before or after the
+# first boot of the new generation):
+#   sudo cp -a /home/atlas/.omp/. /var/lib/omp/.omp/
+#   sudo chown -R omp:omp /var/lib/omp/.omp
+{ config, lib, pkgs, ... }:
 
 let
   ohMyPi = pkgs.stdenv.mkDerivation {
@@ -42,7 +70,172 @@ let
       platforms = [ "x86_64-linux" ];
     };
   };
+
+  # Toolset available to the agent inside the container. GNU sed/grep were
+  # removed from nixpkgs; grep comes from gnugrep, sed from busybox.
+  tools = [
+    pkgs.bash
+    pkgs.busybox
+    pkgs.cacert
+    pkgs.coreutils
+    pkgs.curl
+    pkgs.findutils
+    pkgs.git
+    pkgs.gawk
+    pkgs.gnugrep
+    pkgs.ripgrep
+  ];
+
+  # The container rootfs. Assembled explicitly: `streamLayeredImage`
+  # lndir-merges every `contents` tree at the rootfs root (e.g. busybox's
+  # whole fake-root layout would leak in), so we build the exact tree we
+  # want in one derivation and pass it as the sole contents entry.
+  rootfs = pkgs.runCommand "oh-my-pi-rootfs" {
+    preferLocalBuild = true;
+  } ''
+    mkdir -p $out/bin $out/usr/bin $out/usr/local/bin $out/etc/ssl/certs $out/tmp $out/root $out/workspace
+
+    # Expose every tool on the first PATH entry. List order matters: later
+    # packages win, so the GNU tools (coreutils, findutils, gawk, gnugrep)
+    # shadow busybox applets where they exist; busybox still provides sed
+    # and any fallback.
+    for pkg in ${lib.concatStringsSep " " ([ ohMyPi ] ++ tools)}; do
+      [ -d "$pkg/bin" ] || continue
+      for f in "$pkg"/bin/*; do
+        ln -sf "$f" "$out/usr/local/bin/$(basename "$f")"
+      done
+    done
+
+    # Shims for absolute-path lookups.
+    ln -s ${pkgs.bash}/bin/bash $out/bin/bash
+    ln -s ${pkgs.bash}/bin/sh $out/bin/sh
+    ln -s ${pkgs.coreutils}/bin/env $out/usr/bin/env
+
+    # Minimal /etc; podman provides hosts/hostname/resolv.conf at runtime.
+    printf 'root:x:0:0:root:/root:/bin/bash\n' > $out/etc/passwd
+    printf 'root:x:0:\n' > $out/etc/group
+    printf 'passwd: files\ngroup: files\nshadow: files\n' > $out/etc/nsswitch.conf
+    ln -s ${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt $out/etc/ssl/certs/ca-certificates.crt
+    ln -s /proc/mounts $out/etc/mtab
+  '';
+
+  image = pkgs.dockerTools.streamLayeredImage {
+    name = "oh-my-pi";
+    tag = ohMyPi.version;
+    contents = [ rootfs ];
+
+    config = {
+      Env = [
+        "PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+        "HOME=/root"
+        "TERM=xterm-256color"
+        "SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
+        "NIX_SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
+      ];
+      WorkingDir = "/workspace";
+    };
+  };
 in
 {
-  environment.systemPackages = [ ohMyPi ];
+  # Dedicated sandbox user: no wheel, no sudo — if the container is ever
+  # escaped, the attacker lands on an account with no escalation path on
+  # the host. The bash shell allows `sudo -iu omp` for interactive use.
+  users = {
+    groups.omp = { };
+    users.omp = {
+      isSystemUser = true;
+      group = "omp";
+      home = "/var/lib/omp";
+      createHome = true;
+      shell = "${pkgs.bash}/bin/bash";
+      # Rootless podman needs the user runtime dir (/run/user/<uid>) to
+      # survive logouts; the container service also RequiresMountsFor it.
+      linger = true;
+    };
+    # Owner of the workspace; can inspect (not write) the agent's output.
+    users.atlas.extraGroups = [ "omp" ];
+  };
+
+  # Host-side workflow tooling. tmux keeps agent sessions alive across SSH
+  # disconnects; `omp-attach [name]` attaches to — or starts — the tmux
+  # session that drives the `name` container (session and container share
+  # a name, so this extends to multiple containers unchanged).
+  environment.systemPackages = [
+    pkgs.tmux
+    (pkgs.writeShellScriptBin "omp-attach" ''
+      set -e
+      name="$1"; [ -n "$name" ] || name=omp
+      if tmux has-session -t "=$name" 2>/dev/null; then
+        exec tmux attach-session -t "=$name"
+      fi
+      # New session: agent TUI in window 0, host shell in window 1
+      # (for `journalctl -u podman-omp`, `sudo -u omp podman logs omp`, …).
+      cmd="sudo -u omp podman exec -it $name omp"
+      tmux new-session -d -s "$name" "$cmd"
+      tmux new-window -t "=$name"
+      exec tmux attach-session -t "=$name"
+    '')
+  ];
+
+  # Project code the agent works on; mounted at /workspace in the container.
+  systemd.tmpfiles.rules = [
+    "d /srv/omp 0750 omp omp -"
+  ];
+
+  # Let atlas drive the sandbox without a password, e.g.
+  #   sudo -u omp podman exec -it omp omp
+  # Scoped to omp's rootless podman only — no host privilege involved.
+  security.sudo.extraRules = [{
+    users = [ "atlas" ];
+    runAs = "omp";
+    commands = [
+      {
+        command = "/run/current-system/sw/bin/podman";
+        options = [ "NOPASSWD" ];
+      }
+    ];
+  }];
+
+  virtualisation.oci-containers = {
+    backend = "podman";
+    # Note: this module enables virtualisation.podman itself.
+
+    containers.omp = {
+      # Must match the name:tag the image stream loads.
+      image = "oh-my-pi:${ohMyPi.version}";
+      imageStream = image;
+
+      # Rootless: the service runs podman as `omp`, so container root is
+      # the host `omp` account (files the agent creates are omp-owned).
+      podman.user = "omp";
+
+      autoStart = true;
+      workdir = "/workspace";
+      volumes = [
+        "/srv/omp:/workspace"
+        "/var/lib/omp/.omp:/root/.omp"
+      ];
+
+      # --- Hardening: the agent runs unattended ---
+      # Drop every capability; a coding workload needs none (rootless
+      # user-namespace privileges are unaffected by this).
+      capabilities."ALL" = false;
+      extraOptions = [
+        # Fork-bomb / runaway-build protection.
+        "--pids-limit=1024"
+        # Read-only rootfs: the container is ephemeral (--rm on stop), so
+        # nothing can persist in it anyway; this just closes the door.
+        "--read-only"
+        # Writable scratch. /tmp is noexec (no binaries off /tmp); /root
+        # keeps exec so cargo/npm installs under $HOME work. The
+        # /root/.omp bind still overlays the tmpfs.
+        "--tmpfs" "/tmp:rw,noexec,nosuid,nodev"
+        "--tmpfs" "/root:rw,nosuid,nodev"
+      ];
+
+      # Idle forever; drive it with `sudo -u omp podman exec -it omp omp`.
+      entrypoint = "${pkgs.busybox}/bin/sleep";
+      cmd = [ "infinity" ];
+    };
+  };
 }
