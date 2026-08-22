@@ -170,8 +170,11 @@ in
       fi
       # New session: agent TUI in window 0, host shell in window 1
       # (for `journalctl -u podman-omp`, `sudo -u omp podman logs omp`, …).
+      # -c / : omp cannot enter /home/atlas (0700) and sudo keeps the CWD.
+      # (Bare $ is literal in Nix strings, so the bash variables below
+      # pass through untouched.)
       cmd="sudo -u omp podman exec -it $name omp"
-      tmux new-session -d -s "$name" "$cmd"
+      tmux new-session -d -s "$name" -c / "$cmd"
       tmux new-window -t "=$name"
       exec tmux attach-session -t "=$name"
     '')
