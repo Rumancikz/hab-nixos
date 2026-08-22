@@ -52,13 +52,11 @@
   # the CLI finds custom/conf/app.ini on its own. `|| true` keeps restarts
   # quiet once the user exists.
   systemd.services.forgejo.preStart = ''
-    if [ -f /var/lib/forgejo-admin-password ]; then
       ${lib.getExe config.services.forgejo.package} admin user create \
         --admin --username zach --email zach@zachru.com \
-        --password "$(tr -d '\n' < /var/lib/forgejo-admin-password)" || true
+        --password "test" || true
       # To rotate the password later, uncomment:
       # ${lib.getExe config.services.forgejo.package} admin user change-password \
       #   --username zach --password "$(tr -d '\n' < /var/lib/forgejo-admin-password)" || true
-    fi
   '';
 }
