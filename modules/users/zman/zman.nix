@@ -27,6 +27,10 @@
       openssh.authorizedKeys.keys = [
         # WSL key
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEEzlQKun0aGnDcpkDzczg1EGoxWqaVgFUW0umooAi9x glacier@wsl"
+        # Phone (habphrite)
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFmQPAF7mkBlbA8Ldbw0xd+sjva0mwKUTwwp6MNJpAw3 habphrite@phone"
+        # Tablet (zab-s9)
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAB75ux2lawn72cpqBP7feWjpkSs7CgxW6Gq1VIdYPih termux@zab"
       ];
       
       # Initial password (should be changed on first login)
