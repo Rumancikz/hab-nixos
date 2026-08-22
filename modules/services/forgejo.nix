@@ -8,12 +8,14 @@
 # Privacy posture: registration is disabled, sign-in is required to view
 # anything, and new repositories default to private.
 #
-# One-time setup after the first switch (on hab-lab-1) — create the admin:
-#   cd /var/lib/forgejo && sudo -u forgejo <store-path>/bin/forgejo \
-#     admin user create --username <name> --password '<pw>' \
-#     --email <name>@zachru.com --admin
-# then issue a fine-grained access token for the atlas agent (web UI →
-# user Settings → Applications).
+# Admin user: created declaratively by systemd.services.forgejo.preStart
+# below. The password lives in a root-only file on the box — never in this
+# repo or the unit file. One-time setup on hab-lab-1:
+#   echo -n 'your-password' | sudo tee /var/lib/forgejo-admin-password
+#   sudo chmod 600 /var/lib/forgejo-admin-password
+# then restart/switch so preStart runs. After first login, issue a
+# fine-grained access token for the atlas agent (web UI → user Settings →
+# Applications).
 { config, lib, pkgs, ... }:
 
 {
@@ -38,10 +40,25 @@
         REQUIRE_SIGNIN_VIEW = true;
       };
 
-      repository = {
-        # New repositories are private unless made public explicitly.
-        DEFAULT_PRIVATE = "private";
-      };
+      # repository = {
+      #   # New repositories are private unless made public explicitly.
+      #   DEFAULT_PRIVATE = "private";
+      # };
     };
   };
+
+  # Idempotent admin bootstrap. Runs after the module's own preStart (which
+  # regenerates app.ini); the unit's WorkingDirectory is /var/lib/forgejo, so
+  # the CLI finds custom/conf/app.ini on its own. `|| true` keeps restarts
+  # quiet once the user exists.
+  systemd.services.forgejo.preStart = ''
+    if [ -f /var/lib/forgejo-admin-password ]; then
+      ${lib.getExe config.services.forgejo.package} admin user create \
+        --admin --username zach --email zach@zachru.com \
+        --password "$(tr -d '\n' < /var/lib/forgejo-admin-password)" || true
+      # To rotate the password later, uncomment:
+      # ${lib.getExe config.services.forgejo.package} admin user change-password \
+      #   --username zach --password "$(tr -d '\n' < /var/lib/forgejo-admin-password)" || true
+    fi
+  '';
 }
