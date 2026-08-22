@@ -28,8 +28,11 @@
 # Inference: the agent runs against the local llama.cpp (llama-swap)
 # server at 10.0.0.155:8080 via LLAMA_CPP_BASE_URL (set below). omp's
 # built-in `llama.cpp` provider auto-discovers the server's models and
-# needs no API key. Pick a model in the TUI (alt+p) — the choice persists
-# in /var/lib/omp/.omp.
+# needs no API key; the models.yml baked in below (replicated from the
+# laptop's) adds real metadata — 256k context and xhigh thinking for
+# qwen3-8-4, where auto-discovery alone would assign conservative
+# defaults. Pick a model in the TUI (alt+p) — the choice persists in
+# /var/lib/omp/.omp.
 #
 # One-time migration of existing state (on the box, before or after the
 # first boot of the new generation):
@@ -91,6 +94,29 @@ let
     pkgs.gnugrep
     pkgs.ripgrep
   ];
+
+  # Model metadata for the local llama.cpp server, replicated from the
+  # laptop's ~/.omp/agent/models.yml: qwen3-8-4 gets its real 256k context
+  # window and xhigh thinking ladder (auto-discovery alone assigns
+  # conservative defaults). Bound read-only into the container's agent dir
+  # (see container volumes).
+  ompModelsYml = pkgs.writeText "omp-models.yml" ''
+    providers:
+      llama.cpp:
+        baseUrl: http://10.0.0.155:8080/v1
+        api: openai-responses
+        auth: none
+        discovery:
+          type: llama.cpp
+        modelOverrides:
+          qwen3-8-4:
+            input: [text, image]
+            contextWindow: 262144
+            thinking:
+              mode: effort
+              efforts: [low, medium, xhigh]
+              defaultLevel: xhigh
+  '';
 
   # The container rootfs. Assembled explicitly: `streamLayeredImage`
   # lndir-merges every `contents` tree at the rootfs root (e.g. busybox's
@@ -192,6 +218,7 @@ in
   systemd.tmpfiles.rules = [
     "d /srv/omp 0750 omp omp -"
     "d /var/lib/omp/.omp 0700 omp omp -"
+    "d /var/lib/omp/.omp/agent 0700 omp omp -"
   ];
 
   # Let atlas drive the sandbox without a password, e.g.
@@ -226,6 +253,8 @@ in
       volumes = [
         "/srv/omp:/workspace"
         "/var/lib/omp/.omp:/root/.omp"
+        # Model metadata for the local server; overlays the /root/.omp bind.
+        "${ompModelsYml}:/root/.omp/agent/models.yml:ro"
       ];
 
       # Local inference: omp's built-in `llama.cpp` provider reads this and
