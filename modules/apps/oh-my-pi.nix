@@ -127,6 +127,20 @@ let
               mode: effort
               efforts: [low, medium, xhigh]
               defaultLevel: xhigh
+      sglang:
+        baseUrl: http://10.0.0.155:30000/v1
+        api: openai-responses
+        auth: none
+        discovery:
+          type: sglang
+        modelOverrides:
+          qwen3-8-4:
+            input: [text, image]
+            contextWindow: 262144
+            thinking:
+              mode: effort
+              efforts: [low, medium, xhigh]
+              defaultLevel: xhigh
   '';
 
   # The container rootfs. Assembled explicitly: `streamLayeredImage`
