@@ -134,7 +134,7 @@ let
         discovery:
           type: llama.cpp
         modelOverrides:
-          Qwen/Qwen3.8-27B:
+          qwen3-8:
             input: [text, image]
             contextWindow: 262144
             thinking:
