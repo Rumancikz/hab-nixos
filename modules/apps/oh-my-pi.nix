@@ -132,7 +132,7 @@ let
         api: openai-responses
         auth: none
         discovery:
-          type: sglang
+          type: llama.cpp
         modelOverrides:
           qwen3-8-4:
             input: [text, image]
